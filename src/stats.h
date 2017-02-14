@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
   File    : stats.h
   Contents: statistical functions
-  Author  : Kristian Loewe, Christian Borgelt
+  Authors : Kristian Loewe, Christian Borgelt
 ----------------------------------------------------------------------------*/
 #ifndef STATS_H
 #define STATS_H
@@ -99,7 +99,7 @@ inline REAL std (REAL *data, int n)
 /*--------------------------------------------------------------------------*/
 
 /* tstat2
- * -----
+ * ------
  * compute t statistic
  *   (two independent samples, equal variances)
  */
@@ -114,7 +114,7 @@ inline REAL tstat2 (REAL *x1, REAL *x2, int n1, int n2)
              / ( sqrt( ( (REAL)(n1-1)*v1 + (REAL)(n2-1)*v2 ) / (REAL)tdf )
                  * sqrt(1/(REAL)n1 + 1/(REAL)n2) );
   return t;
-}  // tstat()
+}  // tstat2()
 
 /*--------------------------------------------------------------------------*/
 
