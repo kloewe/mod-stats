@@ -1,0 +1,37 @@
+#-----------------------------------------------------------------------------
+# File    : makefile-mex
+# Contents: build objects
+# Author  : Kristian Loewe
+#-----------------------------------------------------------------------------
+.SUFFIXES:                                   # remove built-in rules
+MAKEFLAGS   += -r
+
+CFLAGS      = -std=c99 \
+              -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
+              -pedantic -fPIC
+COPTIMFLAGS = -O2
+
+MATLABROOT  = $(dir $(realpath $(shell which matlab)))
+MEXCC       = $(realpath $(MATLABROOT))/mex -largeArrayDims
+
+OBJDIR      = ../obj/$(shell uname -m)/matlab
+_DUMMY      := $(shell mkdir -p $(OBJDIR); mkdir -p $(OBJDIR))
+
+#-----------------------------------------------------------------------------
+# Build Objects
+#-----------------------------------------------------------------------------
+all: stats_flt.o stats_dbl.o
+
+stats_flt.o:           $(OBJDIR)/stats_flt.o
+$(OBJDIR)/stats_flt.o: stats.h
+$(OBJDIR)/stats_flt.o: stats.c makefile-mex
+	$(MEXCC) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' \
+    -DNDEBUG -DREAL=float -c stats.c -outdir $(OBJDIR); \
+  mv $(OBJDIR)/stats.o $(OBJDIR)/stats_flt.o
+
+stats_dbl.o:           $(OBJDIR)/stats_dbl.o
+$(OBJDIR)/stats_dbl.o: stats.h
+$(OBJDIR)/stats_dbl.o: stats.c makefile-mex
+	$(MEXCC) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' \
+    -DNDEBUG -DREAL=double -c stats.c -outdir $(OBJDIR); \
+  mv $(OBJDIR)/stats.o $(OBJDIR)/stats_dbl.o
