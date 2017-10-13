@@ -1,0 +1,35 @@
+#-----------------------------------------------------------------------------
+# File    : makefile-oct
+# Contents: build objects
+# Author  : Kristian Loewe 
+#           (with modifications for octave by Christina Rossmanith)
+#-----------------------------------------------------------------------------
+.SUFFIXES:                                   # remove built-in rules
+MAKEFLAGS   += -r
+
+CFLAGS      = -std=c99 \
+              -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
+              -pedantic -fPIC
+COPTIMFLAGS = -O2
+
+MEXCC       = mkoctfile --mex
+
+OBJDIR      = ../obj/$(shell uname -m)/octave
+_DUMMY      := $(shell mkdir -p $(OBJDIR); mkdir -p $(OBJDIR))
+
+#-----------------------------------------------------------------------------
+# Build Objects
+#-----------------------------------------------------------------------------
+all: stats_flt.o stats_dbl.o
+
+stats_flt.o:           $(OBJDIR)/stats_flt.o
+$(OBJDIR)/stats_flt.o: stats.h
+$(OBJDIR)/stats_flt.o: stats.c makefile-oct
+	CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' $(MEXCC) \
+    -DNDEBUG -DREAL=float -c $< -o $@
+
+stats_dbl.o:           $(OBJDIR)/stats_dbl.o
+$(OBJDIR)/stats_dbl.o: stats.h
+$(OBJDIR)/stats_dbl.o: stats.c makefile-oct
+	CFLAGS='$(CFLAGS) $(COPTIMFLAGS)' $(MEXCC) \
+    -DNDEBUG -DREAL=double -c $< -o $@
