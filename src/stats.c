@@ -1,47 +1,225 @@
 /*----------------------------------------------------------------------------
   File    : stats.c
-  Contents: statistical functions
-  Author  : Kristian Loewe, Christian Borgelt
+  Contents: basic statistical functions (cpu dispatcher)
+  Author  : Kristian Loewe
 ----------------------------------------------------------------------------*/
 #include "stats.h"
+#ifdef ARCH_IS_X86_64
+#include "cpuinfo.h"
+#endif
+
+/*----------------------------------------------------------------------------
+  Function Prototypes
+----------------------------------------------------------------------------*/
+extern float  ssum     (const float  *a, int n);
+extern float  smean    (const float  *a, int n);
+extern float  svar     (const float  *a, int n);
+extern float  svarm    (const float  *a, int n, float  m);
+extern float  svar0    (const float  *a, int n);
+extern float  sstd     (const float  *a, int n);
+extern float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
+extern float  sfr2z    (const float  r);
+
+extern double dsum     (const double *a, int n);
+extern double dmean    (const double *a, int n);
+extern double dvar     (const double *a, int n);
+extern double dvarm    (const double *a, int n, double m);
+extern double dvar0    (const double *a, int n);
+extern double dstd     (const double *a, int n);
+extern double dtstat2  (const double *x1, const double *x2, int n1, int n2);
+extern double dfr2z    (const double r);
+
+extern double dssum    (const float  *a, int n);
+// ... TODO
+
+/*----------------------------------------------------------------------------
+  Global Variables
+----------------------------------------------------------------------------*/
+ssum_func     *ssum_ptr    = &ssum_select;
+smean_func    *smean_ptr   = &smean_select;
+svar_func     *svar_ptr    = &svar_select;
+svarm_func    *svarm_ptr   = &svarm_select;
+svar0_func    *svar0_ptr   = &svar0_select;
+sstd_func     *sstd_ptr    = &sstd_select;
+ststat2_func  *ststat2_ptr = &ststat2_select;
+sfr2z_func    *sfr2z_ptr   = &sfr2z_select;
+
+dsum_func     *dsum_ptr    = &dsum_select;
+dmean_func    *dmean_ptr   = &dmean_select;
+dvar_func     *dvar_ptr    = &dvar_select;
+dvarm_func    *dvarm_ptr   = &dvarm_select;
+dvar0_func    *dvar0_ptr   = &dvar0_select;
+dstd_func     *dstd_ptr    = &dstd_select;
+dtstat2_func  *dtstat2_ptr = &dtstat2_select;
+dfr2z_func    *dfr2z_ptr   = &dfr2z_select;
+
+dssum_func    *dssum_ptr   = &dssum_select;
+// ... TODO
 
 /*----------------------------------------------------------------------------
   Functions
 ----------------------------------------------------------------------------*/
 
-/* mean
- * ----
- * compute the sample mean
- */
-extern REAL mean (REAL* data, int n);
+float ssum_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*ssum_ptr)(a,n);
+}
 
-/* varm
- * ----
- * compute the unbiased sample variance relative to the given mean m
- */
-extern REAL varm (REAL* data, int n, REAL m);
+float smean_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*smean_ptr)(a,n);
+}
 
-/* var
- * ---
- * compute the unbiased sample variance
- */
-extern REAL var (REAL *data, int n);
+float svar_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*svar_ptr)(a,n);
+}
 
-/* std
- * ---
- * compute the corrected sample standard deviation
- */
-extern REAL std (REAL *data, int n);
+float svarm_select (const float *a, int n, float m) {
+  stats_set_impl(STATS_AUTO);
+  return (*svarm_ptr)(a,n,m);
+}
 
-/* tstat2
- * -----
- * compute t statistic
- *   (two independent samples, equal variances)
- */
-extern REAL tstat2 (REAL *x1, REAL *x2, int n1, int n2);
+float svar0_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*svar0_ptr)(a,n);
+}
 
-/* fisher_r2z
- * ----------
- * Fisher r-to-z transform
- */
-extern REAL fisher_r2z (REAL r);
+float sstd_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*sstd_ptr)(a,n);
+}
+
+float ststat2_select (const float *x1, const float *x2, int n1, int n2) {
+  stats_set_impl(STATS_AUTO);
+  return (*ststat2_ptr)(x1,x2,n1,n2);
+}
+
+float sfr2z_select (float r) {
+  stats_set_impl(STATS_AUTO);
+  return (*sfr2z_ptr)(r);
+}
+
+/*--------------------------------------------------------------------------*/
+
+double dsum_select (const double *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dsum_ptr)(a,n);
+}
+
+double dmean_select (const double *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dmean_ptr)(a,n);
+}
+
+double dvar_select (const double *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dvar_ptr)(a,n);
+}
+
+double dvarm_select (const double *a, int n, double m) {
+  stats_set_impl(STATS_AUTO);
+  return (*dvarm_ptr)(a,n,m);
+}
+
+double dvar0_select (const double *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dvar0_ptr)(a,n);
+}
+
+double dstd_select (const double *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dstd_ptr)(a,n);
+}
+
+double dtstat2_select (const double *x1, const double *x2, int n1, int n2) {
+  stats_set_impl(STATS_AUTO);
+  return (*dtstat2_ptr)(x1,x2,n1,n2);
+}
+
+double dfr2z_select (double r) {
+  stats_set_impl(STATS_AUTO);
+  return (*dfr2z_ptr)(r);
+}
+
+/*--------------------------------------------------------------------------*/
+
+double dssum_select (const float *a, int n) {
+  stats_set_impl(STATS_AUTO);
+  return (*dssum_ptr)(a,n);
+}
+
+// ... TODO
+
+/*--------------------------------------------------------------------------*/
+
+stats_flags stats_set_impl (stats_flags impl) {
+
+  #ifndef ARCH_IS_X86_64
+  impl = STATS_NAIVE;
+  #endif
+
+  switch (impl) {
+    case STATS_AUTO :
+    case STATS_AVX :
+      if (hasAVX()) {
+        // ssum_ptr  = &ssum_avx;
+        // ... TODO
+        // dsum_ptr  = &dsum_avx;
+        // ... TODO
+        // dssum_ptr = &dssum_avx;
+        // ... TODO
+        // return STATS_AVX;
+      }
+    case STATS_SSE2 :
+      if (hasSSE2()) {
+        ssum_ptr    = &ssum_sse2;
+        smean_ptr   = &smean_sse2;
+        svar_ptr    = &svar_sse2;
+        svarm_ptr   = &svarm_sse2;
+        svar0_ptr   = &svar0_sse2;
+        sstd_ptr    = &sstd_sse2;
+        ststat2_ptr = &ststat2_sse2;
+        sfr2z_ptr   = &sfr2z_naive;
+
+        dsum_ptr    = &dsum_naive;    // TODO
+        dmean_ptr   = &dmean_naive;   // TODO
+        dvar_ptr    = &dvar_naive;    // TODO
+        dvarm_ptr   = &dvarm_naive;   // TODO
+        dvar0_ptr   = &dvar0_naive;   // TODO
+        dstd_ptr    = &dstd_naive;    // TODO
+        dtstat2_ptr = &dtstat2_naive; // TODO
+        dfr2z_ptr   = &dfr2z_naive;
+
+        dssum_ptr   = &dssum_naive;   // TODO
+        // ... TODO
+
+        return STATS_SSE2;
+      }
+    case STATS_NAIVE :
+      ssum_ptr    = &ssum_naive;
+      smean_ptr   = &smean_naive;
+      svar_ptr    = &svar_naive;
+      svarm_ptr   = &svarm_naive;
+      svar0_ptr   = &svar0_naive;
+      sstd_ptr    = &sstd_naive;
+      ststat2_ptr = &ststat2_naive;
+      sfr2z_ptr   = &sfr2z_naive;
+
+      dsum_ptr    = &dsum_naive;
+      dmean_ptr   = &dmean_naive;
+      dvar_ptr    = &dvar_naive;
+      dvarm_ptr   = &dvarm_naive;
+      dvar0_ptr   = &dvar0_naive;
+      dstd_ptr    = &dstd_naive;
+      dtstat2_ptr = &dtstat2_naive;
+      dfr2z_ptr   = &dfr2z_naive;
+
+      dssum_ptr   = &dssum_naive;
+      // ... TODO
+
+      return STATS_NAIVE;
+    default :
+      return stats_set_impl(STATS_AUTO);
+  }
+}  // stats_set_impl()

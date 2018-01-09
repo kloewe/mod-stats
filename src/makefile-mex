@@ -6,32 +6,50 @@
 .SUFFIXES:                                   # remove built-in rules
 MAKEFLAGS   += -r
 
+CPUINFODIR  = ../../cpuinfo
+DOTDIR      = ../../dot
+
 CFLAGS      = -std=c99 \
               -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
               -pedantic -fPIC
 COPTIMFLAGS = -O2
+DEFS        = -DNDEBUG
 
 MATLABROOT  = $(dir $(realpath $(shell which matlab)))
-MEXCC       = $(realpath $(MATLABROOT))/mex -largeArrayDims
+MEX_FLAGS   = -largeArrayDims
+MEXCC       = $(realpath $(MATLABROOT))/mex $(MEX_FLAGS)
+SUF         = mexa64
 
 OBJDIR      = ../obj/$(shell uname -m)/matlab
-_DUMMY      := $(shell mkdir -p $(OBJDIR); mkdir -p $(OBJDIR))
+_DUMMY      := $(shell mkdir -p $(OBJDIR))
+
+OBJS = stats.o stats_naive.o stats_sse2.o
 
 #-----------------------------------------------------------------------------
 # Build Objects
 #-----------------------------------------------------------------------------
-all: stats_flt.o stats_dbl.o
+all: $(OBJS) stats_all.o
 
-stats_flt.o:           $(OBJDIR)/stats_flt.o
-$(OBJDIR)/stats_flt.o: stats.h
-$(OBJDIR)/stats_flt.o: stats.c makefile-mex
+stats_naive.o:           $(OBJDIR)/stats_naive.o
+$(OBJDIR)/stats_naive.o: $(DOTDIR)/src/dot_naive.h
+$(OBJDIR)/stats_naive.o: stats_naive.h stats_naive_real.h
+$(OBJDIR)/stats_naive.o: stats_naive.c makefile-mex
 	$(MEXCC) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' \
-    -DNDEBUG -DREAL=float -c stats.c -outdir $(OBJDIR); \
-  mv $(OBJDIR)/stats.o $(OBJDIR)/stats_flt.o
+    $(DEFS) -I$(DOTDIR)/src -c stats_naive.c -outdir $(OBJDIR)
 
-stats_dbl.o:           $(OBJDIR)/stats_dbl.o
-$(OBJDIR)/stats_dbl.o: stats.h
-$(OBJDIR)/stats_dbl.o: stats.c makefile-mex
+stats_sse2.o:            $(OBJDIR)/stats_sse2.o
+$(OBJDIR)/stats_sse2.o:  stats_sse2.h
+$(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-mex
+	$(MEXCC) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS) -msse2' \
+    $(DEFS) -I$(DOTDIR)/src -c stats_sse2.c -outdir $(OBJDIR)
+
+stats.o:                 $(OBJDIR)/stats.o
+$(OBJDIR)/stats.o:       stats.h $(CPUINFODIR)/src/cpuinfo.h
+$(OBJDIR)/stats.o:       stats.c makefile-mex
 	$(MEXCC) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' \
-    -DNDEBUG -DREAL=double -c stats.c -outdir $(OBJDIR); \
-  mv $(OBJDIR)/stats.o $(OBJDIR)/stats_dbl.o
+    $(DEFS) -I$(CPUINFODIR)/src -c stats.c -outdir $(OBJDIR)
+
+stats_all.o:             $(OBJDIR)/stats_all.o
+stats_all.o:             makefile-mex
+$(OBJDIR)/stats_all.o:   $(addprefix $(OBJDIR)/, $(OBJS))
+	$(LD) -r -o $(OBJDIR)/stats_all.o $(addprefix $(OBJDIR)/, $(OBJS))
