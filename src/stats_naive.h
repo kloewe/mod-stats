@@ -27,6 +27,8 @@ inline float  svar0_naive    (const float  *a, int n);
 inline float  sstd_naive     (const float  *a, int n);
 inline float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
+inline float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
+                              int n2);
 inline float  sfr2z_naive    (float  r);
 
 inline double dsum_naive     (const double *a, int n);
@@ -36,6 +38,8 @@ inline double dvarm_naive    (const double *a, int n, double m);
 inline double dvar0_naive    (const double *a, int n);
 inline double dstd_naive     (const double *a, int n);
 inline double dtstat2_naive  (const double *x1, const double *x2, int n1,
+                              int n2);
+inline double dwelcht_naive  (const double *x1, const double *x2, int n1,
                               int n2);
 inline double dfr2z_naive    (double r);
 
@@ -62,6 +66,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define var0_naive   svar0_naive
 #define std_naive    sstd_naive
 #define tstat2_naive ststat2_naive
+#define welcht_naive swelcht_naive
 #define fr2z_naive   sfr2z_naive
 #include "stats_naive_real.h"
 #undef dot_naive
@@ -73,6 +78,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef var0_naive
 #undef std_naive
 #undef tstat2_naive
+#undef welcht_naive
 #undef fr2z_naive
 #undef REAL
 
@@ -90,6 +96,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define var0_naive   dvar0_naive
 #define std_naive    dstd_naive
 #define tstat2_naive dtstat2_naive
+#define welcht_naive dwelcht_naive
 #define fr2z_naive   dfr2z_naive
 #include "stats_naive_real.h"
 #undef dot_naive
@@ -100,6 +107,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef var0_naive
 #undef std_naive
 #undef tstat2_naive
+#undef welcht_naive
 #undef fr2z_naive
 #undef REAL
 

@@ -18,6 +18,7 @@ extern float  svarm    (const float  *a, int n, float  m);
 extern float  svar0    (const float  *a, int n);
 extern float  sstd     (const float  *a, int n);
 extern float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
+extern float  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
 extern float  sfr2z    (const float  r);
 
 extern double dsum     (const double *a, int n);
@@ -27,6 +28,7 @@ extern double dvarm    (const double *a, int n, double m);
 extern double dvar0    (const double *a, int n);
 extern double dstd     (const double *a, int n);
 extern double dtstat2  (const double *x1, const double *x2, int n1, int n2);
+extern double dwelcht  (const double *x1, const double *x2, int n1, int n2);
 extern double dfr2z    (const double r);
 
 extern double dssum    (const float  *a, int n);
@@ -42,6 +44,7 @@ svarm_func    *svarm_ptr   = &svarm_select;
 svar0_func    *svar0_ptr   = &svar0_select;
 sstd_func     *sstd_ptr    = &sstd_select;
 ststat2_func  *ststat2_ptr = &ststat2_select;
+swelcht_func  *swelcht_ptr = &swelcht_select;
 sfr2z_func    *sfr2z_ptr   = &sfr2z_select;
 
 dsum_func     *dsum_ptr    = &dsum_select;
@@ -51,6 +54,7 @@ dvarm_func    *dvarm_ptr   = &dvarm_select;
 dvar0_func    *dvar0_ptr   = &dvar0_select;
 dstd_func     *dstd_ptr    = &dstd_select;
 dtstat2_func  *dtstat2_ptr = &dtstat2_select;
+dwelcht_func  *dwelcht_ptr = &dwelcht_select;
 dfr2z_func    *dfr2z_ptr   = &dfr2z_select;
 
 dssum_func    *dssum_ptr   = &dssum_select;
@@ -95,6 +99,11 @@ float ststat2_select (const float *x1, const float *x2, int n1, int n2) {
   return (*ststat2_ptr)(x1,x2,n1,n2);
 }
 
+float swelcht_select (const float *x1, const float *x2, int n1, int n2) {
+  stats_set_impl(STATS_AUTO);
+  return (*swelcht_ptr)(x1,x2,n1,n2);
+}
+
 float sfr2z_select (float r) {
   stats_set_impl(STATS_AUTO);
   return (*sfr2z_ptr)(r);
@@ -135,6 +144,11 @@ double dstd_select (const double *a, int n) {
 double dtstat2_select (const double *x1, const double *x2, int n1, int n2) {
   stats_set_impl(STATS_AUTO);
   return (*dtstat2_ptr)(x1,x2,n1,n2);
+}
+
+double dwelcht_select (const double *x1, const double *x2, int n1, int n2) {
+  stats_set_impl(STATS_AUTO);
+  return (*dwelcht_ptr)(x1,x2,n1,n2);
 }
 
 double dfr2z_select (double r) {
@@ -180,6 +194,7 @@ stats_flags stats_set_impl (stats_flags impl) {
         svar0_ptr   = &svar0_sse2;
         sstd_ptr    = &sstd_sse2;
         ststat2_ptr = &ststat2_sse2;
+        swelcht_ptr = &swelcht_naive; // TODO
         sfr2z_ptr   = &sfr2z_naive;
 
         dsum_ptr    = &dsum_naive;    // TODO
@@ -189,6 +204,7 @@ stats_flags stats_set_impl (stats_flags impl) {
         dvar0_ptr   = &dvar0_naive;   // TODO
         dstd_ptr    = &dstd_naive;    // TODO
         dtstat2_ptr = &dtstat2_naive; // TODO
+        dwelcht_ptr = &dwelcht_naive; // TODO
         dfr2z_ptr   = &dfr2z_naive;
 
         dssum_ptr   = &dssum_naive;   // TODO
@@ -204,6 +220,7 @@ stats_flags stats_set_impl (stats_flags impl) {
       svar0_ptr   = &svar0_naive;
       sstd_ptr    = &sstd_naive;
       ststat2_ptr = &ststat2_naive;
+      swelcht_ptr = &swelcht_naive;
       sfr2z_ptr   = &sfr2z_naive;
 
       dsum_ptr    = &dsum_naive;
@@ -213,6 +230,7 @@ stats_flags stats_set_impl (stats_flags impl) {
       dvar0_ptr   = &dvar0_naive;
       dstd_ptr    = &dstd_naive;
       dtstat2_ptr = &dtstat2_naive;
+      dwelcht_ptr = &dwelcht_naive;
       dfr2z_ptr   = &dfr2z_naive;
 
       dssum_ptr   = &dssum_naive;

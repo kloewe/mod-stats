@@ -112,6 +112,24 @@ inline REAL tstat2_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 
 /*--------------------------------------------------------------------------*/
 
+/* welcht_naive
+ * ------------
+ * compute t statistic
+ *   (two independent samples, equal or unequal variances)
+ */
+inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
+{
+  REAL m1  = mean_naive(x1, n1);      // sample means
+  REAL m2  = mean_naive(x2, n2);
+  REAL v1  = varm_naive(x1, n1, m1);  // sample variances
+  REAL v2  = varm_naive(x2, n2, m2);
+  REAL t   = (m1 - m2)                // t statistic
+             / sqrt( v1/(REAL)n1 + v2/(REAL)n2);
+  return t;
+}  // welcht_naive()
+
+/*--------------------------------------------------------------------------*/
+
 /* fr2z_naive
  * ----------
  * Fisher r-to-z transform
