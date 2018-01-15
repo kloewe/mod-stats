@@ -1,25 +1,31 @@
 #-----------------------------------------------------------------------------
 # File    : makefile-oct
-# Contents: build objects
+# Contents: build objects for use with octave/mex
 # Author  : Kristian Loewe
 #           (with modifications for octave by Christina Rossmanith)
+#
+# Examples: make -f makefile-oct
+#           make -B -f makefile-oct
+#           make -B -f makefile-oct MEX_FLAGS='-v'
 #-----------------------------------------------------------------------------
 .SUFFIXES:                                   # remove built-in rules
-MAKEFLAGS   += -r
+MAKEFLAGS += -r
 
-CPUINFODIR  = ../../cpuinfo
-DOTDIR      = ../../dot
+CPUINFODIR = ../../cpuinfo
+DOTDIR     = ../../dot
 
-CFLAGS      = -std=c99 \
-              -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
-              -pedantic -fPIC
-COPTIMFLAGS = -O2
-DEFS        = -DNDEBUG
+CC        ?= gcc -std=c99
+CFBASE     = -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
+             -pedantic
+CFOPT     ?= -O2 -funroll-loops
+DEFS      ?= -DNDEBUG -DOCTAVE
+CFLAGS     = $(CFBASE) $(CFOPT) -fPIC $(DEFS)
 
-MEXCC       = mkoctfile --mex
+MEX_FLAGS ?=
+MEXCC      = mkoctfile --mex $(MEX_FLAGS)
 
-OBJDIR      = ../obj/$(shell uname -m)/octave
-_DUMMY      := $(shell mkdir -p $(OBJDIR))
+OBJDIR     = ../obj/$(shell uname -m)/octave
+_DUMMY    := $(shell mkdir -p $(OBJDIR))
 
 OBJS = stats.o stats_naive.o stats_sse2.o
 
@@ -32,20 +38,17 @@ stats_naive.o:           $(OBJDIR)/stats_naive.o
 $(OBJDIR)/stats_naive.o: $(DOTDIR)/src/dot_naive.h
 $(OBJDIR)/stats_naive.o: stats_naive.h stats_naive_real.h
 $(OBJDIR)/stats_naive.o: stats_naive.c makefile-oct
-	CFLAGS='$(CFLAGS) $(COPTIMFLAGS)' $(MEXCC) \
-    $(DEFS) -I$(DOTDIR)/src -c $< -o $@
+	CFLAGS='$(CFLAGS)'         $(MEXCC) -I$(DOTDIR)/src     -c $< -o $@
 
 stats_sse2.o:            $(OBJDIR)/stats_sse2.o
 $(OBJDIR)/stats_sse2.o:  stats_sse2.h
 $(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-oct
-	CFLAGS='$(CFLAGS) $(COPTIMFLAGS) -msse2' $(MEXCC) \
-    $(DEFS) -I$(DOTDIR)/src -c $< -o $@
+	CFLAGS='$(CFLAGS) -msse2' $(MEXCC) -I$(DOTDIR)/src     -c $< -o $@
 
 stats.o:                 $(OBJDIR)/stats.o
 $(OBJDIR)/stats.o:       stats.h $(CPUINFODIR)/src/cpuinfo.h
 $(OBJDIR)/stats.o:       stats.c makefile-oct
-	CFLAGS='$(CFLAGS) $(COPTIMFLAGS)' $(MEXCC) \
-    $(DEFS) -I$(CPUINFODIR)/src -c $< -o $@
+	CFLAGS='$(CFLAGS)'        $(MEXCC) -I$(CPUINFODIR)/src -c $< -o $@
 
 stats_all.o:             $(OBJDIR)/stats_all.o
 stats_all.o:             makefile-oct
