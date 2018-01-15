@@ -24,28 +24,30 @@ extern "C"
 #ifdef REAL                     // if REAL is already defined, save its
 #  include "real-is-double.inc" // original definition based on the value
 #  if REAL_IS_DOUBLE
-#    define dot    ddot
-#    define sum    dsum
-#    define mean   dmean
-#    define var    dvar
-#    define varm   dvarm
-#    define var0   dvar0
-#    define std    dstd
-#    define tstat2 dtstat2
-#    define welcht dwelcht
-#    define fr2z   dfr2z
+#    define dot     ddot
+#    define sum     dsum
+#    define mean    dmean
+#    define var     dvar
+#    define varm    dvarm
+#    define var0    dvar0
+#    define std     dstd
+#    define tstat2  dtstat2
+#    define welcht  dwelcht
+#    define pairedt dpairedt
+#    define fr2z    dfr2z
 #  else
-#    define sqrt   sqrtf
-#    define dot    sdot
-#    define sum    ssum
-#    define mean   smean
-#    define var    svar
-#    define varm   svarm
-#    define var0   svar0
-#    define std    sstd
-#    define tstat2 ststat2
-#    define welcht swelcht
-#    define fr2z   sfr2z
+#    define sqrt    sqrtf
+#    define dot     sdot
+#    define sum     ssum
+#    define mean    smean
+#    define var     svar
+#    define varm    svarm
+#    define var0    svar0
+#    define std     sstd
+#    define tstat2  ststat2
+#    define welcht  swelcht
+#    define pairedt spairedt
+#    define fr2z    sfr2z
 #  endif
 #endif
 
@@ -73,31 +75,33 @@ typedef enum {
 /*----------------------------------------------------------------------------
   Type Definitions
 ----------------------------------------------------------------------------*/
-typedef float  (ssum_func)    (const float  *a, int n);
-typedef float  (smean_func)   (const float  *a, int n);
-typedef float  (svar_func)    (const float  *a, int n);
-typedef float  (svarm_func)   (const float  *a, int n, float  m);
-typedef float  (svar0_func)   (const float  *a, int n);
-typedef float  (sstd_func)    (const float  *a, int n);
-typedef float  (ststat2_func) (const float  *x1, const float  *x2, int n1,
-                               int n2);
-typedef float  (swelcht_func) (const float  *x1, const float  *x2, int n1,
-                               int n2);
-typedef float  (sfr2z_func)   (const float  r);
+typedef float  (ssum_func)     (const float  *a, int n);
+typedef float  (smean_func)    (const float  *a, int n);
+typedef float  (svar_func)     (const float  *a, int n);
+typedef float  (svarm_func)    (const float  *a, int n, float  m);
+typedef float  (svar0_func)    (const float  *a, int n);
+typedef float  (sstd_func)     (const float  *a, int n);
+typedef float  (ststat2_func)  (const float  *x1, const float  *x2, int n1,
+                                int n2);
+typedef float  (swelcht_func)  (const float  *x1, const float  *x2, int n1,
+                                int n2);
+typedef float  (spairedt_func) (const float  *x1, const float  *x2, int n);
+typedef float  (sfr2z_func)    (const float  r);
 
-typedef double (dsum_func)    (const double *a, int n);
-typedef double (dmean_func)   (const double *a, int n);
-typedef double (dvar_func)    (const double *a, int n);
-typedef double (dvarm_func)   (const double *a, int n, double m);
-typedef double (dvar0_func)   (const double *a, int n);
-typedef double (dstd_func)    (const double *a, int n);
-typedef double (dtstat2_func) (const double *x1, const double *x2, int n1,
-                               int n2);
-typedef double (dwelcht_func) (const double *x1, const double *x2, int n1,
-                               int n2);
-typedef double (dfr2z_func)   (const double r);
+typedef double (dsum_func)     (const double *a, int n);
+typedef double (dmean_func)    (const double *a, int n);
+typedef double (dvar_func)     (const double *a, int n);
+typedef double (dvarm_func)    (const double *a, int n, double m);
+typedef double (dvar0_func)    (const double *a, int n);
+typedef double (dstd_func)     (const double *a, int n);
+typedef double (dtstat2_func)  (const double *x1, const double *x2, int n1,
+                                int n2);
+typedef double (dwelcht_func)  (const double *x1, const double *x2, int n1,
+                                int n2);
+typedef double (dpairedt_func) (const double *x1, const double *x2, int n);
+typedef double (dfr2z_func)    (const double r);
 
-typedef double (dssum_func)   (const float  *a, int n);
+typedef double (dssum_func)    (const float  *a, int n);
 // ... TODO
 
 /*----------------------------------------------------------------------------
@@ -111,6 +115,7 @@ extern svar0_func    *svar0_ptr;
 extern sstd_func     *sstd_ptr;
 extern ststat2_func  *ststat2_ptr;
 extern swelcht_func  *swelcht_ptr;
+extern spairedt_func *spairedt_ptr;
 extern sfr2z_func    *sfr2z_ptr;
 
 extern dsum_func     *dsum_ptr;
@@ -121,6 +126,7 @@ extern dvar0_func    *dvar0_ptr;
 extern dstd_func     *dstd_ptr;
 extern dtstat2_func  *dtstat2_ptr;
 extern dwelcht_func  *dwelcht_ptr;
+extern dpairedt_func *dpairedt_ptr;
 extern dfr2z_func    *dfr2z_ptr;
 
 extern dssum_func    *dssum_ptr;
@@ -137,6 +143,7 @@ inline float  svar0    (const float  *a, int n);
 inline float  sstd     (const float  *a, int n);
 inline float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
 inline float  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
+inline float  spairedt (const float  *x1, const float  *x2, int n);
 inline float  sfr2z    (const float  r);
 
 inline double dsum     (const double *a, int n);
@@ -147,6 +154,7 @@ inline double dvar0    (const double *a, int n);
 inline double dstd     (const double *a, int n);
 inline double dtstat2  (const double *x1, const double *x2, int n1, int n2);
 inline double dwelcht  (const double *x1, const double *x2, int n1, int n2);
+inline double dpairedt (const double *x1, const double *x2, int n);
 inline double dfr2z    (const double r);
 
 inline double dssum    (const float  *a, int n);
@@ -185,6 +193,7 @@ extern float  ststat2_select  (const float  *x1, const float  *x2, int n1,
                                int n2);
 extern float  swelcht_select  (const float  *x1, const float  *x2, int n1,
                                int n2);
+extern float  spairedt_select (const float  *x1, const float  *x2, int n);
 extern float  sfr2z_select    (float  r);
 
 extern double dsum_select     (const double *a, int n);
@@ -197,6 +206,7 @@ extern double dtstat2_select  (const double *x1, const double *x2, int n1,
                                int n2);
 extern double dwelcht_select  (const double *x1, const double *x2, int n1,
                                int n2);
+extern double dpairedt_select (const double *x1, const double *x2, int n);
 extern double dfr2z_select    (double r);
 
 extern double dssum_select    (const float  *a, int n);
@@ -212,6 +222,7 @@ extern float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
 extern float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
+extern float  spairedt_naive (const float  *x1, const float  *x2, int n);
 extern float  sfr2z_naive    (float  r);
 
 extern double dsum_naive     (const double *a, int n);
@@ -224,6 +235,7 @@ extern double dtstat2_naive  (const double *x1, const double *x2, int n1,
                               int n2);
 extern double dwelcht_naive  (const double *x1, const double *x2, int n1,
                               int n2);
+extern double dpairedt_naive (const double *x1, const double *x2, int n);
 extern double dfr2z_naive    (double r);
 
 extern double dssum_naive    (const float  *a, int n);
@@ -291,6 +303,10 @@ inline float swelcht (const float *x1, const float *x2, int n1, int n2) {
   return (*swelcht_ptr)(x1,x2,n1,n2);
 }
 
+inline float spairedt (const float *x1, const float *x2, int n) {
+  return (*spairedt_ptr)(x1,x2,n);
+}
+
 inline float sfr2z (float r) {
   return (*sfr2z_ptr)(r);
 }
@@ -327,6 +343,10 @@ inline double dtstat2 (const double *x1, const double *x2, int n1, int n2) {
 
 inline double dwelcht (const double *x1, const double *x2, int n1, int n2) {
   return (*dwelcht_ptr)(x1,x2,n1,n2);
+}
+
+inline double dpairedt (const double *x1, const double *x2, int n) {
+  return (*dpairedt_ptr)(x1,x2,n);
 }
 
 inline double dfr2z (double r) {

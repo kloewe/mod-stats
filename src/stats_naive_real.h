@@ -130,6 +130,26 @@ inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 
 /*--------------------------------------------------------------------------*/
 
+/* pairedt_naive
+ * ------------
+ * compute t statistic
+ *   (dependent/paired samples)
+ */
+inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
+{
+  REAL m1 = mean_naive(x1, n);       // sample means
+  REAL m2 = mean_naive(x2, n);
+  REAL md = m1 - m2;                 // mean difference
+  REAL sd = 0;                       // standard deviation of the differences
+  for (int i = 0; i < n; i++)
+    sd += ((x1[i] - x2[i]) - md) * ((x1[i] - x2[i]) - md);
+  sd = sqrt(sd/(REAL)(n - 1));
+  REAL t  = md/(sd/sqrt((REAL)n));   // t statistic
+  return t;
+}
+
+/*--------------------------------------------------------------------------*/
+
 /* fr2z_naive
  * ----------
  * Fisher r-to-z transform
