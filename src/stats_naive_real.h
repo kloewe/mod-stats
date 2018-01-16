@@ -6,6 +6,7 @@
 #ifndef STATS_NAIVE_REAL_H
 #define STATS_NAIVE_REAL_H
 
+#include <stdlib.h>
 #include <assert.h>
 
 /*----------------------------------------------------------------------------
@@ -49,7 +50,7 @@ inline REAL var0_naive (const REAL *a, int n)
 {
   assert(a && (n > 0));
 
-  return dot_naive(a,a,n) /(REAL)(n-1) ;
+  return dot_naive(a, a, n) /(REAL)(n-1);
 }  // var0_naive()
 
 /*--------------------------------------------------------------------------*/
@@ -99,15 +100,14 @@ inline REAL std_naive (const REAL *a, int n)
  */
 inline REAL tstat2_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 {
-  int  tdf = n1 + n2 - 2;             // total degrees of freedom
-  REAL m1  = mean_naive(x1, n1);      // sample means
-  REAL m2  = mean_naive(x2, n2);
-  REAL v1  = varm_naive(x1, n1, m1);  // sample variances
-  REAL v2  = varm_naive(x2, n2, m2);
-  REAL t   = (m1 - m2)                // t statistic
-             / ( sqrt( ( (REAL)(n1-1)*v1 + (REAL)(n2-1)*v2 ) / (REAL)tdf )
-                 * sqrt(1/(REAL)n1 + 1/(REAL)n2) );
-  return t;
+  REAL m1 = mean_naive(x1, n1);       // sample means
+  REAL m2 = mean_naive(x2, n2);
+  REAL md = m1 - m2;                  // mean difference
+  REAL v1 = varm_naive(x1, n1, m1);   // sample variances
+  REAL v2 = varm_naive(x2, n2, m2);
+  int  df = n1 + n2 - 2;              // degrees of freedom
+  return md / ( sqrt( ( (REAL)(n1-1)*v1 + (REAL)(n2-1)*v2 ) / (REAL)df )
+                * sqrt(1/(REAL)n1 + 1/(REAL)n2) );
 }  // tstat2_naive()
 
 /*--------------------------------------------------------------------------*/
@@ -119,13 +119,12 @@ inline REAL tstat2_naive (const REAL *x1, const REAL *x2, int n1, int n2)
  */
 inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 {
-  REAL m1  = mean_naive(x1, n1);      // sample means
-  REAL m2  = mean_naive(x2, n2);
-  REAL v1  = varm_naive(x1, n1, m1);  // sample variances
-  REAL v2  = varm_naive(x2, n2, m2);
-  REAL t   = (m1 - m2)                // t statistic
-             / sqrt( v1/(REAL)n1 + v2/(REAL)n2);
-  return t;
+  REAL m1 = mean_naive(x1, n1);       // sample means
+  REAL m2 = mean_naive(x2, n2);
+  REAL md = m1 - m2;                  // mean difference
+  REAL v1 = varm_naive(x1, n1, m1);   // sample variances
+  REAL v2 = varm_naive(x2, n2, m2);
+  return md / sqrt(v1/(REAL)n1 + v2/(REAL)n2);
 }  // welcht_naive()
 
 /*--------------------------------------------------------------------------*/
@@ -137,16 +136,46 @@ inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
  */
 inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
 {
-  REAL m1 = mean_naive(x1, n);       // sample means
+  REAL m1 = mean_naive(x1, n);        // sample means
   REAL m2 = mean_naive(x2, n);
-  REAL md = m1 - m2;                 // mean difference
-  REAL sd = 0;                       // standard deviation of the differences
+  REAL md = m1 - m2;                  // mean difference
+  REAL sd = 0;                        // standard deviation of the differences
   for (int i = 0; i < n; i++)
     sd += ((x1[i] - x2[i]) - md) * ((x1[i] - x2[i]) - md);
   sd = sqrt(sd/(REAL)(n - 1));
-  REAL t  = md/(sd/sqrt((REAL)n));   // t statistic
-  return t;
-}
+  return md / (sd / sqrt((REAL)n));
+}  // pairedt_naive()
+
+/*--------------------------------------------------------------------------*/
+
+/* didt_naive
+ * ------------
+ * compute t statistic
+ *   (difference-in-differences)
+ */
+inline REAL didt_naive (const REAL *x1, const REAL *x2,
+                        const REAL *y1, const REAL *y2, int nx, int ny)
+{
+  REAL *diffx = (REAL *) malloc((size_t)nx *sizeof(REAL));
+  for (int i = 0; i < nx; i++)
+    diffx[i] = x2[i] - x1[i];
+  REAL mdx = mean_naive(diffx, nx);
+  REAL vdx = varm_naive(diffx, nx, mdx);
+  free(diffx);
+
+  REAL *diffy = (REAL *) malloc((size_t)ny *sizeof(REAL));
+  for (int i = 0; i < ny; i++)
+    diffy[i] = y2[i] - y1[i];
+  REAL mdy = mean_naive(diffy, ny);
+  REAL vdy = varm_naive(diffy, ny, mdy);
+  free(diffy);
+
+  REAL md = mdx - mdy;
+
+  int df = nx + ny - 2;
+  return md / ( sqrt( ( (REAL)(nx-1)*vdx + (REAL)(ny-1)*vdy ) / (REAL)df )
+                * sqrt(1/(REAL)nx + 1/(REAL)ny) );
+}  // didt_naive()
 
 /*--------------------------------------------------------------------------*/
 

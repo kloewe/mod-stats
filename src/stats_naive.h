@@ -30,6 +30,9 @@ inline float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
 inline float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
 inline float  spairedt_naive (const float  *x1, const float  *x2, int n);
+inline float  sdidt_naive    (const float  *x1, const float  *x2,
+                              const float  *y1, const float  *y2,
+                              int nx, int ny);
 inline float  sfr2z_naive    (float  r);
 
 inline double dsum_naive     (const double *a, int n);
@@ -43,6 +46,9 @@ inline double dtstat2_naive  (const double *x1, const double *x2, int n1,
 inline double dwelcht_naive  (const double *x1, const double *x2, int n1,
                               int n2);
 inline double dpairedt_naive (const double *x1, const double *x2, int n);
+inline double ddidt_naive    (const double *x1, const double *x2,
+                              const double *y1, const double *y2,
+                              int nx, int ny);
 inline double dfr2z_naive    (double r);
 
 inline double dssum_naive    (const float  *a, int n);
@@ -70,6 +76,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define tstat2_naive  ststat2_naive
 #define welcht_naive  swelcht_naive
 #define pairedt_naive spairedt_naive
+#define didt_naive    sdidt_naive
 #define fr2z_naive    sfr2z_naive
 #include "stats_naive_real.h"
 #undef dot_naive
@@ -83,6 +90,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef tstat2_naive
 #undef welcht_naive
 #undef pairedt_naive
+#undef didt_naive
 #undef fr2z_naive
 #undef REAL
 
@@ -102,6 +110,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define tstat2_naive  dtstat2_naive
 #define welcht_naive  dwelcht_naive
 #define pairedt_naive dpairedt_naive
+#define didt_naive    ddidt_naive
 #define fr2z_naive    dfr2z_naive
 #include "stats_naive_real.h"
 #undef dot_naive
@@ -114,6 +123,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef tstat2_naive
 #undef welcht_naive
 #undef pairedt_naive
+#undef didt_naive
 #undef fr2z_naive
 #undef REAL
 
