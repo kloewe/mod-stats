@@ -48,7 +48,7 @@ inline REAL mean_naive (const REAL *a, int n)
  */
 inline REAL var0_naive (const REAL *a, int n)
 {
-  assert(a && (n > 0));
+  assert(a && (n > 1));
 
   return dot_naive(a, a, n) /(REAL)(n-1);
 }  // var0_naive()
@@ -61,7 +61,7 @@ inline REAL var0_naive (const REAL *a, int n)
  */
 inline REAL varm_naive (const REAL *a, int n, REAL m)
 {
-  assert(a && (n > 0));
+  assert(a && (n > 1));
 
   REAL v = 0.0f;
   for (int i = 0; i < n; i++) 
@@ -77,6 +77,8 @@ inline REAL varm_naive (const REAL *a, int n, REAL m)
  */
 inline REAL var_naive (const REAL *a, int n)
 {
+  assert(a && (n > 1));
+
   return varm_naive(a, n, mean_naive(a, n));
 }  // var_naive()
 
@@ -88,6 +90,8 @@ inline REAL var_naive (const REAL *a, int n)
  */
 inline REAL std_naive (const REAL *a, int n)
 {
+  assert(a && (n > 1));
+
   return sqrt(var_naive(a, n));
 }  // std_naive()
 
@@ -100,6 +104,8 @@ inline REAL std_naive (const REAL *a, int n)
  */
 inline REAL tstat_naive (const REAL *a, int n)
 {
+  assert(a && (n > 1));
+
   REAL m = mean_naive(a, n);          // sample mean
   REAL s = sqrt(varm_naive(a, n, m)); // sample standard deviation
   return m / (s / sqrt((REAL)n));
@@ -114,13 +120,15 @@ inline REAL tstat_naive (const REAL *a, int n)
  */
 inline REAL tstat2_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 {
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
   REAL m1 = mean_naive(x1, n1);       // sample means
   REAL m2 = mean_naive(x2, n2);
   REAL md = m1 - m2;                  // mean difference
   REAL v1 = varm_naive(x1, n1, m1);   // sample variances
   REAL v2 = varm_naive(x2, n2, m2);
-  int  df = n1 + n2 - 2;              // degrees of freedom
-  return md / ( sqrt( ( (REAL)(n1-1)*v1 + (REAL)(n2-1)*v2 ) / (REAL)df )
+  REAL df = (REAL)n1 + (REAL)n2 - 2;  // degrees of freedom
+  return md / ( sqrt( ( (REAL)(n1-1)*v1 + (REAL)(n2-1)*v2 ) / df )
                 * sqrt(1/(REAL)n1 + 1/(REAL)n2) );
 }  // tstat2_naive()
 
@@ -133,6 +141,8 @@ inline REAL tstat2_naive (const REAL *x1, const REAL *x2, int n1, int n2)
  */
 inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
 {
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
   REAL m1 = mean_naive(x1, n1);       // sample means
   REAL m2 = mean_naive(x2, n2);
   REAL md = m1 - m2;                  // mean difference
@@ -150,6 +160,8 @@ inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
  */
 inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
 {
+  assert(x1 && x2 && (n > 1));
+
 #if 0
   REAL m1 = mean_naive(x1, n);        // sample means
   REAL m2 = mean_naive(x2, n);
@@ -179,6 +191,8 @@ inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
 inline REAL didt_naive (const REAL *x1, const REAL *x2,
                         const REAL *y1, const REAL *y2, int nx, int ny)
 {
+  assert(x1 && x2 && y1 && y2 && (nx > 1) && (ny > 1));
+
   REAL *diffx = (REAL *) malloc((size_t)nx *sizeof(REAL));
   for (int i = 0; i < nx; i++)
     diffx[i] = x2[i] - x1[i];
