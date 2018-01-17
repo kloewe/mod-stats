@@ -25,6 +25,7 @@ inline float  svar_naive     (const float  *a, int n);
 inline float  svarm_naive    (const float  *a, int n, float  m);
 inline float  svar0_naive    (const float  *a, int n);
 inline float  sstd_naive     (const float  *a, int n);
+inline float  ststat_naive   (const float  *a, int n);
 inline float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
 inline float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
@@ -41,6 +42,7 @@ inline double dvar_naive     (const double *a, int n);
 inline double dvarm_naive    (const double *a, int n, double m);
 inline double dvar0_naive    (const double *a, int n);
 inline double dstd_naive     (const double *a, int n);
+inline double dtstat_naive   (const double *a, int n);
 inline double dtstat2_naive  (const double *x1, const double *x2, int n1,
                               int n2);
 inline double dwelcht_naive  (const double *x1, const double *x2, int n1,
@@ -73,6 +75,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define varm_naive    svarm_naive
 #define var0_naive    svar0_naive
 #define std_naive     sstd_naive
+#define tstat_naive   ststat_naive
 #define tstat2_naive  ststat2_naive
 #define welcht_naive  swelcht_naive
 #define pairedt_naive spairedt_naive
@@ -87,6 +90,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef varm_naive
 #undef var0_naive
 #undef std_naive
+#undef tstat_naive
 #undef tstat2_naive
 #undef welcht_naive
 #undef pairedt_naive
@@ -107,6 +111,7 @@ inline double dssum_naive    (const float  *a, int n);
 #define varm_naive    dvarm_naive
 #define var0_naive    dvar0_naive
 #define std_naive     dstd_naive
+#define tstat_naive   dtstat_naive
 #define tstat2_naive  dtstat2_naive
 #define welcht_naive  dwelcht_naive
 #define pairedt_naive dpairedt_naive
@@ -120,6 +125,7 @@ inline double dssum_naive    (const float  *a, int n);
 #undef varm_naive
 #undef var0_naive
 #undef std_naive
+#undef tstat_naive
 #undef tstat2_naive
 #undef welcht_naive
 #undef pairedt_naive

@@ -93,6 +93,20 @@ inline REAL std_naive (const REAL *a, int n)
 
 /*--------------------------------------------------------------------------*/
 
+/* tstat_naive
+ * ------------
+ * compute t statistic
+ *   (one sample)
+ */
+inline REAL tstat_naive (const REAL *a, int n)
+{
+  REAL m = mean_naive(a, n);          // sample mean
+  REAL s = sqrt(varm_naive(a, n, m)); // sample standard deviation
+  return m / (s / sqrt((REAL)n));
+}  // tstat_naive()
+
+/*--------------------------------------------------------------------------*/
+
 /* tstat2_naive
  * ------------
  * compute t statistic
@@ -136,6 +150,7 @@ inline REAL welcht_naive (const REAL *x1, const REAL *x2, int n1, int n2)
  */
 inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
 {
+#if 0
   REAL m1 = mean_naive(x1, n);        // sample means
   REAL m2 = mean_naive(x2, n);
   REAL md = m1 - m2;                  // mean difference
@@ -144,6 +159,14 @@ inline REAL pairedt_naive (const REAL *x1, const REAL *x2, int n)
     sd += ((x1[i] - x2[i]) - md) * ((x1[i] - x2[i]) - md);
   sd = sqrt(sd/(REAL)(n - 1));
   return md / (sd / sqrt((REAL)n));
+#else
+  REAL *diff = (REAL *) malloc((size_t)n *sizeof(REAL));
+  for (int i = 0; i < n; i++)
+    diff[i] = x1[i] - x2[i];
+  REAL t = tstat_naive(diff, n);
+  free(diff);
+  return t;
+#endif
 }  // pairedt_naive()
 
 /*--------------------------------------------------------------------------*/

@@ -31,6 +31,7 @@ extern "C"
 #    define varm    dvarm
 #    define var0    dvar0
 #    define std     dstd
+#    define tstat   dtstat
 #    define tstat2  dtstat2
 #    define welcht  dwelcht
 #    define pairedt dpairedt
@@ -45,6 +46,7 @@ extern "C"
 #    define varm    svarm
 #    define var0    svar0
 #    define std     sstd
+#    define tstat   ststat
 #    define tstat2  ststat2
 #    define welcht  swelcht
 #    define pairedt spairedt
@@ -83,6 +85,7 @@ typedef float  (svar_func)     (const float  *a, int n);
 typedef float  (svarm_func)    (const float  *a, int n, float  m);
 typedef float  (svar0_func)    (const float  *a, int n);
 typedef float  (sstd_func)     (const float  *a, int n);
+typedef float  (ststat_func)   (const float  *a, int n);
 typedef float  (ststat2_func)  (const float  *x1, const float  *x2, int n1,
                                 int n2);
 typedef float  (swelcht_func)  (const float  *x1, const float  *x2, int n1,
@@ -99,6 +102,7 @@ typedef double (dvar_func)     (const double *a, int n);
 typedef double (dvarm_func)    (const double *a, int n, double m);
 typedef double (dvar0_func)    (const double *a, int n);
 typedef double (dstd_func)     (const double *a, int n);
+typedef double (dtstat_func)   (const double *a, int n);
 typedef double (dtstat2_func)  (const double *x1, const double *x2, int n1,
                                 int n2);
 typedef double (dwelcht_func)  (const double *x1, const double *x2, int n1,
@@ -121,6 +125,7 @@ extern svar_func     *svar_ptr;
 extern svarm_func    *svarm_ptr;
 extern svar0_func    *svar0_ptr;
 extern sstd_func     *sstd_ptr;
+extern ststat_func   *ststat_ptr;
 extern ststat2_func  *ststat2_ptr;
 extern swelcht_func  *swelcht_ptr;
 extern spairedt_func *spairedt_ptr;
@@ -133,6 +138,7 @@ extern dvar_func     *dvar_ptr;
 extern dvarm_func    *dvarm_ptr;
 extern dvar0_func    *dvar0_ptr;
 extern dstd_func     *dstd_ptr;
+extern dtstat_func   *dtstat_ptr;
 extern dtstat2_func  *dtstat2_ptr;
 extern dwelcht_func  *dwelcht_ptr;
 extern dpairedt_func *dpairedt_ptr;
@@ -151,6 +157,7 @@ inline float  svar     (const float  *a, int n);
 inline float  svarm    (const float  *a, int n, float  m);
 inline float  svar0    (const float  *a, int n);
 inline float  sstd     (const float  *a, int n);
+inline float  ststat   (const float  *a, int n);
 inline float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
 inline float  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
 inline float  spairedt (const float  *x1, const float  *x2, int n);
@@ -165,6 +172,7 @@ inline double dvar     (const double *a, int n);
 inline double dvarm    (const double *a, int n, double m);
 inline double dvar0    (const double *a, int n);
 inline double dstd     (const double *a, int n);
+inline double dtstat   (const double *a, int n);
 inline double dtstat2  (const double *x1, const double *x2, int n1, int n2);
 inline double dwelcht  (const double *x1, const double *x2, int n1, int n2);
 inline double dpairedt (const double *x1, const double *x2, int n);
@@ -205,6 +213,7 @@ extern float  svar_select     (const float  *a, int n);
 extern float  svarm_select    (const float  *a, int n, float m);
 extern float  svar0_select    (const float  *a, int n);
 extern float  sstd_select     (const float  *a, int n);
+extern float  ststat_select   (const float  *a, int n);
 extern float  ststat2_select  (const float  *x1, const float  *x2, int n1,
                                int n2);
 extern float  swelcht_select  (const float  *x1, const float  *x2, int n1,
@@ -221,6 +230,7 @@ extern double dvar_select     (const double *a, int n);
 extern double dvarm_select    (const double *a, int n, double m);
 extern double dvar0_select    (const double *a, int n);
 extern double dstd_select     (const double *a, int n);
+extern double dtstat_select   (const double *a, int n);
 extern double dtstat2_select  (const double *x1, const double *x2, int n1,
                                int n2);
 extern double dwelcht_select  (const double *x1, const double *x2, int n1,
@@ -240,6 +250,7 @@ extern float  svar_naive     (const float  *a, int n);
 extern float  svarm_naive    (const float  *a, int n, float m);
 extern float  svar0_naive    (const float  *a, int n);
 extern float  sstd_naive     (const float  *a, int n);
+extern float  ststat_naive   (const float  *a, int n);
 extern float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
                               int n2);
 extern float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
@@ -256,6 +267,7 @@ extern double dvar_naive     (const double *a, int n);
 extern double dvarm_naive    (const double *a, int n, double m);
 extern double dvar0_naive    (const double *a, int n);
 extern double dstd_naive     (const double *a, int n);
+extern double dtstat_naive   (const double *a, int n);
 extern double dtstat2_naive  (const double *x1, const double *x2, int n1,
                               int n2);
 extern double dwelcht_naive  (const double *x1, const double *x2, int n1,
@@ -329,6 +341,11 @@ inline float sstd (const float *a, int n)
   return (*sstd_ptr)(a,n);
 }
 
+inline float ststat (const float *a, int n)
+{
+  return (*ststat_ptr)(a,n);
+}
+
 inline float ststat2 (const float *x1, const float *x2, int n1, int n2)
 {
   return (*ststat2_ptr)(x1,x2,n1,n2);
@@ -385,6 +402,11 @@ inline double dvar0 (const double *a, int n)
 inline double dstd (const double *a, int n)
 {
   return (*dstd_ptr)(a,n);
+}
+
+inline double dtstat (const double *a, int n)
+{
+  return (*dtstat_ptr)(a,n);
 }
 
 inline double dtstat2 (const double *x1, const double *x2, int n1, int n2)
