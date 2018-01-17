@@ -38,17 +38,21 @@ stats_naive.o:           $(OBJDIR)/stats_naive.o
 $(OBJDIR)/stats_naive.o: $(DOTDIR)/src/dot_naive.h
 $(OBJDIR)/stats_naive.o: stats_naive.h stats_naive_real.h
 $(OBJDIR)/stats_naive.o: stats_naive.c makefile-oct
-	CFLAGS='$(CFLAGS)'         $(MEXCC) -I$(DOTDIR)/src     -c $< -o $@
+	CFLAGS='$(CFLAGS)'        $(MEXCC) \
+    -c $< -o $@
 
 stats_sse2.o:            $(OBJDIR)/stats_sse2.o
 $(OBJDIR)/stats_sse2.o:  stats_sse2.h
 $(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-oct
-	CFLAGS='$(CFLAGS) -msse2' $(MEXCC) -I$(DOTDIR)/src     -c $< -o $@
+	CFLAGS='$(CFLAGS) -msse2' $(MEXCC) \
+    -c $< -o $@
 
 stats.o:                 $(OBJDIR)/stats.o
 $(OBJDIR)/stats.o:       stats.h $(CPUINFODIR)/src/cpuinfo.h
 $(OBJDIR)/stats.o:       stats.c makefile-oct
-	CFLAGS='$(CFLAGS)'        $(MEXCC) -I$(CPUINFODIR)/src -c $< -o $@
+	CFLAGS='$(CFLAGS)'        $(MEXCC) \
+    -I$(CPUINFODIR)/src -I$(DOTDIR)/src \
+    -c $< -o $@
 
 stats_all.o:             $(OBJDIR)/stats_all.o
 stats_all.o:             makefile-oct

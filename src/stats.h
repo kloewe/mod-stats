@@ -11,7 +11,10 @@ extern "C"
 {
 #endif
 
+#include <stdlib.h>
 #include <math.h>
+#include <assert.h>
+#include "dot.h"
 
 /*----------------------------------------------------------------------------
   Preprocessor Definitions
@@ -80,38 +83,10 @@ typedef enum {
   Type Definitions
 ----------------------------------------------------------------------------*/
 typedef float  (ssum_func)     (const float  *a, int n);
-typedef float  (smean_func)    (const float  *a, int n);
-typedef float  (svar_func)     (const float  *a, int n);
 typedef float  (svarm_func)    (const float  *a, int n, float  m);
-typedef float  (svar0_func)    (const float  *a, int n);
-typedef float  (sstd_func)     (const float  *a, int n);
-typedef float  (ststat_func)   (const float  *a, int n);
-typedef float  (ststat2_func)  (const float  *x1, const float  *x2, int n1,
-                                int n2);
-typedef float  (swelcht_func)  (const float  *x1, const float  *x2, int n1,
-                                int n2);
-typedef float  (spairedt_func) (const float  *x1, const float  *x2, int n);
-typedef float  (sdidt_func)    (const float  *x1, const float  *x2,
-                                const float  *y1, const float  *y2,
-                                int nx, int ny);
-typedef float  (sfr2z_func)    (const float  r);
 
 typedef double (dsum_func)     (const double *a, int n);
-typedef double (dmean_func)    (const double *a, int n);
-typedef double (dvar_func)     (const double *a, int n);
 typedef double (dvarm_func)    (const double *a, int n, double m);
-typedef double (dvar0_func)    (const double *a, int n);
-typedef double (dstd_func)     (const double *a, int n);
-typedef double (dtstat_func)   (const double *a, int n);
-typedef double (dtstat2_func)  (const double *x1, const double *x2, int n1,
-                                int n2);
-typedef double (dwelcht_func)  (const double *x1, const double *x2, int n1,
-                                int n2);
-typedef double (dpairedt_func) (const double *x1, const double *x2, int n);
-typedef double (ddidt_func)    (const double *x1, const double *x2,
-                                const double *y1, const double *y2,
-                                int nx, int ny);
-typedef double (dfr2z_func)    (const double r);
 
 typedef double (dssum_func)    (const float  *a, int n);
 // ... TODO
@@ -120,30 +95,10 @@ typedef double (dssum_func)    (const float  *a, int n);
   Global Variables
 ----------------------------------------------------------------------------*/
 extern ssum_func     *ssum_ptr;
-extern smean_func    *smean_ptr;
-extern svar_func     *svar_ptr;
 extern svarm_func    *svarm_ptr;
-extern svar0_func    *svar0_ptr;
-extern sstd_func     *sstd_ptr;
-extern ststat_func   *ststat_ptr;
-extern ststat2_func  *ststat2_ptr;
-extern swelcht_func  *swelcht_ptr;
-extern spairedt_func *spairedt_ptr;
-extern sdidt_func    *sdidt_ptr;
-extern sfr2z_func    *sfr2z_ptr;
 
 extern dsum_func     *dsum_ptr;
-extern dmean_func    *dmean_ptr;
-extern dvar_func     *dvar_ptr;
 extern dvarm_func    *dvarm_ptr;
-extern dvar0_func    *dvar0_ptr;
-extern dstd_func     *dstd_ptr;
-extern dtstat_func   *dtstat_ptr;
-extern dtstat2_func  *dtstat2_ptr;
-extern dwelcht_func  *dwelcht_ptr;
-extern dpairedt_func *dpairedt_ptr;
-extern ddidt_func    *ddidt_ptr;
-extern dfr2z_func    *dfr2z_ptr;
 
 extern dssum_func    *dssum_ptr;
 // ... TODO
@@ -208,101 +163,31 @@ extern stats_flags stats_set_impl (stats_flags impl);
 
 
 extern float  ssum_select     (const float  *a, int n);
-extern float  smean_select    (const float  *a, int n);
-extern float  svar_select     (const float  *a, int n);
 extern float  svarm_select    (const float  *a, int n, float m);
-extern float  svar0_select    (const float  *a, int n);
-extern float  sstd_select     (const float  *a, int n);
-extern float  ststat_select   (const float  *a, int n);
-extern float  ststat2_select  (const float  *x1, const float  *x2, int n1,
-                               int n2);
-extern float  swelcht_select  (const float  *x1, const float  *x2, int n1,
-                               int n2);
-extern float  spairedt_select (const float  *x1, const float  *x2, int n);
-extern float  sdidt_select    (const float  *x1, const float  *x2,
-                               const float  *y1, const float  *y2,
-                               int nx, int ny);
-extern float  sfr2z_select    (float  r);
 
 extern double dsum_select     (const double *a, int n);
-extern double dmean_select    (const double *a, int n);
-extern double dvar_select     (const double *a, int n);
 extern double dvarm_select    (const double *a, int n, double m);
-extern double dvar0_select    (const double *a, int n);
-extern double dstd_select     (const double *a, int n);
-extern double dtstat_select   (const double *a, int n);
-extern double dtstat2_select  (const double *x1, const double *x2, int n1,
-                               int n2);
-extern double dwelcht_select  (const double *x1, const double *x2, int n1,
-                               int n2);
-extern double dpairedt_select (const double *x1, const double *x2, int n);
-extern double ddidt_select    (const double *x1, const double *x2,
-                               const double *y1, const double *y2,
-                               int nx, int ny);
-extern double dfr2z_select    (double r);
 
 extern double dssum_select    (const float  *a, int n);
 // ... TODO
 
 extern float  ssum_naive     (const float  *a, int n);
-extern float  smean_naive    (const float  *a, int n);
-extern float  svar_naive     (const float  *a, int n);
 extern float  svarm_naive    (const float  *a, int n, float m);
-extern float  svar0_naive    (const float  *a, int n);
-extern float  sstd_naive     (const float  *a, int n);
-extern float  ststat_naive   (const float  *a, int n);
-extern float  ststat2_naive  (const float  *x1, const float  *x2, int n1,
-                              int n2);
-extern float  swelcht_naive  (const float  *x1, const float  *x2, int n1,
-                              int n2);
-extern float  spairedt_naive (const float  *x1, const float  *x2, int n);
-extern float  sdidt_naive    (const float  *x1, const float  *x2,
-                              const float  *y1, const float  *y2,
-                              int nx, int ny);
-extern float  sfr2z_naive    (float  r);
 
 extern double dsum_naive     (const double *a, int n);
-extern double dmean_naive    (const double *a, int n);
-extern double dvar_naive     (const double *a, int n);
 extern double dvarm_naive    (const double *a, int n, double m);
-extern double dvar0_naive    (const double *a, int n);
-extern double dstd_naive     (const double *a, int n);
-extern double dtstat_naive   (const double *a, int n);
-extern double dtstat2_naive  (const double *x1, const double *x2, int n1,
-                              int n2);
-extern double dwelcht_naive  (const double *x1, const double *x2, int n1,
-                              int n2);
-extern double dpairedt_naive (const double *x1, const double *x2, int n);
-extern double ddidt_naive    (const double *x1, const double *x2,
-                              const double *y1, const double *y2,
-                              int nx, int ny);
-extern double dfr2z_naive    (double r);
 
 extern double dssum_naive    (const float  *a, int n);
 // ... TODO
 
 #ifdef ARCH_IS_X86_64
 extern float  ssum_sse2     (const float  *a, int n);
-extern float  smean_sse2    (const float  *a, int n);
-extern float  svar_sse2     (const float  *a, int n);
 extern float  svarm_sse2    (const float  *a, int n, float m);
-extern float  svar0_sse2    (const float  *a, int n);
-extern float  sstd_sse2     (const float  *a, int n);
-extern float  ststat2_sse2  (const float  *x1, const float  *x2, int n1,
-                             int n2);
-extern float  sfr2z_sse2    (float  r);
 
 extern double dsum_sse2     (const double *a, int n);
-extern double dmean_sse2    (const double *a, int n);
-extern double dvar_sse2     (const double *a, int n);
 extern double dvarm_sse2    (const double *a, int n, double m);
-extern double dvar0_sse2    (const double *a, int n);
-extern double dstd_sse2     (const double *a, int n);
-extern double dtstat2_sse2  (const double *x1, const double *x2, int n1,
-                             int n2);
-extern double dfr2z_sse2    (double r);
 
-extern double dssum_sse2    (const float  *a, int n);
+// extern double dssum_sse2    (const float  *a, int n);
 // ... TODO
 #endif
 
@@ -313,64 +198,137 @@ extern double dssum_sse2    (const float  *a, int n);
 
 inline float ssum (const float *a, int n)
 {
+  assert(a && (n > 0));
+
   return (*ssum_ptr)(a,n);
 }
 
 inline float smean (const float *a, int n)
 {
-  return (*smean_ptr)(a,n);
+  assert(a && (n > 0));
+
+  return ssum(a, n) /(float)n;
 }
 
 inline float svar (const float *a, int n)
 {
-  return (*svar_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return svarm(a, n, smean(a, n));
 }
 
 inline float svarm (const float *a, int n, float m)
 {
+  assert(a && (n > 1));
+
   return (*svarm_ptr)(a,n,m);
 }
 
 inline float svar0 (const float *a, int n)
 {
-  return (*svar0_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return sdot(a, a, n) /(float)(n-1);
 }
 
 inline float sstd (const float *a, int n)
 {
-  return (*sstd_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return sqrtf(svar(a, n));
 }
 
 inline float ststat (const float *a, int n)
 {
-  return (*ststat_ptr)(a,n);
+  assert(a && (n > 1));
+
+  float m = smean(a, n);            // sample mean
+  float s = sqrtf(svarm(a, n, m));  // sample standard deviation
+  return m / (s / sqrtf((float)n));
 }
 
 inline float ststat2 (const float *x1, const float *x2, int n1, int n2)
 {
-  return (*ststat2_ptr)(x1,x2,n1,n2);
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
+  float m1 = smean(x1, n1);         // sample means
+  float m2 = smean(x2, n2);
+  float md = m1 - m2;               // mean difference
+  float v1 = svarm(x1, n1, m1);     // sample variances
+  float v2 = svarm(x2, n2, m2);
+  float df = (float)n1 + (float)n2 - 2; // degrees of freedom
+  return md / ( sqrtf( ( (float)(n1-1)*v1 + (float)(n2-1)*v2 ) / df )
+                * sqrtf(1/(float)n1 + 1/(float)n2) );
 }
 
 inline float swelcht (const float *x1, const float *x2, int n1, int n2)
 {
-  return (*swelcht_ptr)(x1,x2,n1,n2);
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
+  float m1 = smean(x1, n1);         // sample means
+  float m2 = smean(x2, n2);
+  float md = m1 - m2;               // mean difference
+  float v1 = svarm(x1, n1, m1);     // sample variances
+  float v2 = svarm(x2, n2, m2);
+  return md / sqrtf(v1/(float)n1 + v2/(float)n2);
 }
 
 inline float spairedt (const float *x1, const float *x2, int n)
 {
-  return (*spairedt_ptr)(x1,x2,n);
+  assert(x1 && x2 && (n > 1));
+
+#if 0
+  float m1 = smean(x1, n);          // sample means
+  float m2 = smean(x2, n);
+  float md = m1 - m2;               // mean difference
+  float sd = 0;                     // standard dev. of the differences
+  for (int i = 0; i < n; i++)
+    sd += ((x1[i] - x2[i]) - md) * ((x1[i] - x2[i]) - md);
+  sd = sqrtf(sd/(float)(n - 1));
+  return md / (sd / sqrtf((float)n));
+#else
+  float *diff = (float *) malloc((size_t)n *sizeof(float));
+  for (int i = 0; i < n; i++)
+    diff[i] = x1[i] - x2[i];
+  float t = ststat(diff, n);
+  free(diff);
+  return t;
+#endif
 }
 
 inline float sdidt (const float *x1, const float *x2,
                     const float *y1, const float *y2, int nx, int ny)
 {
-  return (*sdidt_ptr)(x1,x2,y1,y2,nx,ny);
+  assert(x1 && x2 && y1 && y2 && (nx > 1) && (ny > 1));
+
+  float *diffx = (float *) malloc((size_t)nx *sizeof(float));
+  for (int i = 0; i < nx; i++)
+    diffx[i] = x2[i] - x1[i];
+  float mdx = smean(diffx, nx);
+  float vdx = svarm(diffx, nx, mdx);
+  free(diffx);
+
+  float *diffy = (float *) malloc((size_t)ny *sizeof(float));
+  for (int i = 0; i < ny; i++)
+    diffy[i] = y2[i] - y1[i];
+  float mdy = smean(diffy, ny);
+  float vdy = svarm(diffy, ny, mdy);
+  free(diffy);
+
+  float md = mdx - mdy;
+
+  float df = (float)nx + (float)ny - 2;
+  return md / ( sqrtf( ( (float)(nx-1)*vdx + (float)(ny-1)*vdy ) / df )
+                * sqrtf(1/(float)nx + 1/(float)ny) );
 }
 
 inline float sfr2z (float r)
 {
-  return (*sfr2z_ptr)(r);
-}
+  if (r <= (float)-1) return (float)-R2Z_MAX;
+  if (r >= (float)+1) return (float)+R2Z_MAX;
+  return (float)atanh(r);              // compute arcus tangens hyperbolicus
+}  // sfr2z()
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -381,59 +339,129 @@ inline double dsum (const double *a, int n)
 
 inline double dmean (const double *a, int n)
 {
-  return (*dmean_ptr)(a,n);
+  assert(a && (n > 0));
+
+  return dsum(a, n) /(double)n;
 }
 
 inline double dvar (const double *a, int n)
 {
-  return (*dvar_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return dvarm(a, n, dmean(a, n));
 }
 
 inline double dvarm (const double *a, int n, double m)
 {
+  assert(a && (n > 1));
+
   return (*dvarm_ptr)(a,n,m);
 }
 
 inline double dvar0 (const double *a, int n)
 {
-  return (*dvar0_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return ddot(a, a, n) /(float)(n-1);
 }
 
 inline double dstd (const double *a, int n)
 {
-  return (*dstd_ptr)(a,n);
+  assert(a && (n > 1));
+
+  return sqrt(dvar(a, n));
 }
 
 inline double dtstat (const double *a, int n)
 {
-  return (*dtstat_ptr)(a,n);
+  assert(a && (n > 1));
+
+  double m = dmean(a, n);            // sample mean
+  double s = sqrt(dvarm(a, n, m));   // sample standard deviation
+  return m / (s / sqrt((double)n));
 }
 
 inline double dtstat2 (const double *x1, const double *x2, int n1, int n2)
 {
-  return (*dtstat2_ptr)(x1,x2,n1,n2);
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
+  double m1 = dmean(x1, n1);         // sample means
+  double m2 = dmean(x2, n2);
+  double md = m1 - m2;               // mean difference
+  double v1 = dvarm(x1, n1, m1);     // sample variances
+  double v2 = dvarm(x2, n2, m2);
+  double df = (double)n1 + (double)n2 - 2; // degrees of freedom
+  return md / ( sqrt( ( (double)(n1-1)*v1 + (double)(n2-1)*v2 ) / df )
+                * sqrt(1/(double)n1 + 1/(double)n2) );
 }
 
 inline double dwelcht (const double *x1, const double *x2, int n1, int n2)
 {
-  return (*dwelcht_ptr)(x1,x2,n1,n2);
+  assert(x1 && x2 && (n1 > 1) && (n2 > 1));
+
+  double m1 = dmean(x1, n1);         // sample means
+  double m2 = dmean(x2, n2);
+  double md = m1 - m2;               // mean difference
+  double v1 = dvarm(x1, n1, m1);     // sample variances
+  double v2 = dvarm(x2, n2, m2);
+  return md / sqrt(v1/(double)n1 + v2/(double)n2);
 }
 
 inline double dpairedt (const double *x1, const double *x2, int n)
 {
-  return (*dpairedt_ptr)(x1,x2,n);
+  assert(x1 && x2 && (n > 1));
+
+#if 0
+  double m1 = dmean(x1, n);           // sample means
+  double m2 = dmean(x2, n);
+  double md = m1 - m2;                // mean difference
+  double sd = 0;                      // standard dev. of the differences
+  for (int i = 0; i < n; i++)
+    sd += ((x1[i] - x2[i]) - md) * ((x1[i] - x2[i]) - md);
+  sd = sqrt(sd/(double)(n - 1));
+  return md / (sd / sqrt((double)n));
+#else
+  double *diff = (double *) malloc((size_t)n *sizeof(double));
+  for (int i = 0; i < n; i++)
+    diff[i] = x1[i] - x2[i];
+  double t = dtstat(diff, n);
+  free(diff);
+  return t;
+#endif
 }
 
 inline double ddidt (const double *x1, const double *x2,
                      const double *y1, const double *y2, int nx, int ny)
 {
-  return (*ddidt_ptr)(x1,x2,y1,y2,nx,ny);
+  assert(x1 && x2 && y1 && y2 && (nx > 1) && (ny > 1));
+
+  double *diffx = (double *) malloc((size_t)nx *sizeof(double));
+  for (int i = 0; i < nx; i++)
+    diffx[i] = x2[i] - x1[i];
+  double mdx = dmean(diffx, nx);
+  double vdx = dvarm(diffx, nx, mdx);
+  free(diffx);
+
+  double *diffy = (double *) malloc((size_t)ny *sizeof(double));
+  for (int i = 0; i < ny; i++)
+    diffy[i] = y2[i] - y1[i];
+  double mdy = dmean(diffy, ny);
+  double vdy = dvarm(diffy, ny, mdy);
+  free(diffy);
+
+  double md = mdx - mdy;
+
+  double df = (double)nx + (double)ny - 2;
+  return md / ( sqrt( ( (double)(nx-1)*vdx + (double)(ny-1)*vdy ) / df )
+                * sqrt(1/(double)nx + 1/(double)ny) );
 }
 
 inline double dfr2z (double r)
 {
-  return (*dfr2z_ptr)(r);
-}
+  if (r <= (double)-1) return (double)-R2Z_MAX;
+  if (r >= (double)+1) return (double)+R2Z_MAX;
+  return (double)atanh(r);              // compute arcus tangens hyperbolicus
+}  // dfr2z()
 
 /*--------------------------------------------------------------------------*/
 
