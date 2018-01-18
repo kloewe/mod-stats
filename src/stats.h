@@ -61,7 +61,7 @@ extern "C"
 #define R2Z_MAX 18.3684002848385504   // atanh(1-epsilon)
 
 /*----------------------------------------------------------------------------
-  Enum to encode the sets of implementations
+  Type Definitions: enum to encode the sets of implementations
 ----------------------------------------------------------------------------*/
 typedef enum {
     STATS_NAIVE     = 1,   // plain C
@@ -80,7 +80,7 @@ typedef enum {
 // chosen automatically.
 
 /*----------------------------------------------------------------------------
-  Type Definitions
+  Type Definitions: functions
 ----------------------------------------------------------------------------*/
 typedef float  (ssum_func)     (const float  *a, int n);
 typedef float  (svarm_func)    (const float  *a, int n, float  m);
@@ -92,7 +92,7 @@ typedef double (dssum_func)    (const float  *a, int n);
 // ... TODO
 
 /*----------------------------------------------------------------------------
-  Global Variables
+  Global Variables: function pointers
 ----------------------------------------------------------------------------*/
 extern ssum_func     *ssum_ptr;
 extern svarm_func    *svarm_ptr;
@@ -102,6 +102,19 @@ extern dvarm_func    *dvarm_ptr;
 
 extern dssum_func    *dssum_ptr;
 // ... TODO
+
+/*----------------------------------------------------------------------------
+  Type Definitions: structs
+----------------------------------------------------------------------------*/
+typedef struct stres {
+  float tstat;
+  float df;
+} stres;
+
+typedef struct dtres {
+  double tstat;
+  double df;
+} dtres;
 
 /*----------------------------------------------------------------------------
   Function Prototypes
@@ -114,7 +127,7 @@ inline float  svar0    (const float  *a, int n);
 inline float  sstd     (const float  *a, int n);
 inline float  ststat   (const float  *a, int n);
 inline float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
-inline float  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
+inline stres  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
 inline float  spairedt (const float  *x1, const float  *x2, int n);
 inline float  sdidt    (const float  *x1, const float  *x2,
                         const float  *y1, const float  *y2,
@@ -129,7 +142,7 @@ inline double dvar0    (const double *a, int n);
 inline double dstd     (const double *a, int n);
 inline double dtstat   (const double *a, int n);
 inline double dtstat2  (const double *x1, const double *x2, int n1, int n2);
-inline double dwelcht  (const double *x1, const double *x2, int n1, int n2);
+inline dtres  dwelcht  (const double *x1, const double *x2, int n1, int n2);
 inline double dpairedt (const double *x1, const double *x2, int n);
 inline double ddidt    (const double *x1, const double *x2,
                         const double *y1, const double *y2,
@@ -261,7 +274,7 @@ inline float ststat2 (const float *x1, const float *x2, int n1, int n2)
                 * sqrtf(1/(float)n1 + 1/(float)n2) );
 }
 
-inline float swelcht (const float *x1, const float *x2, int n1, int n2)
+inline stres swelcht (const float *x1, const float *x2, int n1, int n2)
 {
   assert(x1 && x2 && (n1 > 1) && (n2 > 1));
 
@@ -270,7 +283,12 @@ inline float swelcht (const float *x1, const float *x2, int n1, int n2)
   float md = m1 - m2;               // mean difference
   float v1 = svarm(x1, n1, m1);     // sample variances
   float v2 = svarm(x2, n2, m2);
-  return md / sqrtf(v1/(float)n1 + v2/(float)n2);
+  float n1f = (float)n1;
+  float n2f = (float)n2;
+  float df = ((v1/n1f + v2/n2f) * (v1/n1f + v2/n2f))
+              / ((v1*v1)/(n1f*n1f*(n1f-1)) + (v2*v2)/(n2f*n2f*(n2f-1)));
+  stres res = { .tstat = md / sqrtf(v1/n1f + v2/n2f), .df = df };
+  return res;
 }
 
 inline float spairedt (const float *x1, const float *x2, int n)
@@ -395,7 +413,7 @@ inline double dtstat2 (const double *x1, const double *x2, int n1, int n2)
                 * sqrt(1/(double)n1 + 1/(double)n2) );
 }
 
-inline double dwelcht (const double *x1, const double *x2, int n1, int n2)
+inline dtres dwelcht (const double *x1, const double *x2, int n1, int n2)
 {
   assert(x1 && x2 && (n1 > 1) && (n2 > 1));
 
@@ -404,7 +422,12 @@ inline double dwelcht (const double *x1, const double *x2, int n1, int n2)
   double md = m1 - m2;               // mean difference
   double v1 = dvarm(x1, n1, m1);     // sample variances
   double v2 = dvarm(x2, n2, m2);
-  return md / sqrt(v1/(double)n1 + v2/(double)n2);
+  double n1f = (double)n1;
+  double n2f = (double)n2;
+  double df = ((v1/n1f + v2/n2f) * (v1/n1f + v2/n2f))
+              / ((v1*v1)/(n1f*n1f*(n1f-1)) + (v2*v2)/(n2f*n2f*(n2f-1)));
+  dtres  res = { .tstat = md / sqrt(v1/n1f + v2/n2f), .df = df };
+  return res;
 }
 
 inline double dpairedt (const double *x1, const double *x2, int n)

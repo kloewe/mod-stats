@@ -19,7 +19,7 @@ extern float  svar0    (const float  *a, int n);
 extern float  sstd     (const float  *a, int n);
 extern float  ststat   (const float  *a, int n);
 extern float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
-extern float  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
+extern stres  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
 extern float  spairedt (const float  *x1, const float  *x2, int n);
 extern float  sdidt    (const float  *x1, const float  *x2,
                         const float  *y1, const float  *y2, int nx, int ny);
@@ -33,7 +33,7 @@ extern double dvar0    (const double *a, int n);
 extern double dstd     (const double *a, int n);
 extern double dtstat   (const double *a, int n);
 extern double dtstat2  (const double *x1, const double *x2, int n1, int n2);
-extern double dwelcht  (const double *x1, const double *x2, int n1, int n2);
+extern dtres  dwelcht  (const double *x1, const double *x2, int n1, int n2);
 extern double dpairedt (const double *x1, const double *x2, int n);
 extern double ddidt    (const double *x1, const double *x2,
                         const double *y1, const double *y2, int nx, int ny);
