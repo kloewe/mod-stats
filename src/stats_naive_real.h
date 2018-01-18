@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------
   File    : stats_naive_real.h
-  Contents: basic statistical functions (naive implementations)
+  Contents: this file is to be included from stats_naive.h
   Authors : Kristian Loewe
 ----------------------------------------------------------------------------*/
 #ifndef STATS_NAIVE_REAL_H
@@ -8,6 +8,12 @@
 
 #include <stdlib.h>
 #include <assert.h>
+
+/*----------------------------------------------------------------------------
+  Function Prototypes
+----------------------------------------------------------------------------*/
+inline REAL sum_naive  (const REAL *a, int n);
+inline REAL varm_naive (const REAL *a, int n, REAL m);
 
 /*----------------------------------------------------------------------------
   Inline Functions

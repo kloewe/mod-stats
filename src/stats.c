@@ -9,88 +9,126 @@
 #endif
 
 /*----------------------------------------------------------------------------
+  Function Prototypes, Global Variables, and Functions
+----------------------------------------------------------------------------*/
+#ifdef REAL                     // if REAL is already defined, save its
+#  include "real-is-double.inc" // original definition based on the value
+#  undef REAL                   // of REAL_IS_DOUBLE, then undefine it
+#endif
+/*--------------------------------------------------------------------------*/
+#define REAL        float       // (re)define REAL to be float
+#define tres        stres
+#define sum_func    ssum_func
+#define varm_func   svarm_func
+#define sum_ptr     ssum_ptr
+#define varm_ptr    svarm_ptr
+#define sum_select  ssum_select
+#define varm_select svarm_select
+#define sum         ssum
+#define mean        smean
+#define var         svar
+#define varm        svarm
+#define var0        svar0
+#define std         sstd
+#define tstat       ststat
+#define tstat2      ststat2
+#define welcht      swelcht
+#define pairedt     spairedt
+#define didt        sdidt
+#define fr2z        sfr2z
+#include "stats_real.c"         // single precision versions
+#undef tres
+#undef sum_func
+#undef varm_func
+#undef sum_ptr
+#undef varm_ptr
+#undef sum_select
+#undef varm_select
+#undef sum
+#undef mean
+#undef var
+#undef varm
+#undef var0
+#undef std
+#undef tstat
+#undef tstat2
+#undef welcht
+#undef pairedt
+#undef didt
+#undef fr2z
+#undef REAL
+/*--------------------------------------------------------------------------*/
+#define REAL        double      // (re)define REAL to be double
+#define tres        dtres
+#define sum_func    dsum_func
+#define varm_func   dvarm_func
+#define sum_ptr     dsum_ptr
+#define varm_ptr    dvarm_ptr
+#define sum_select  dsum_select
+#define varm_select dvarm_select
+#define sum         dsum
+#define mean        dmean
+#define var         dvar
+#define varm        dvarm
+#define var0        dvar0
+#define std         dstd
+#define tstat       dtstat
+#define tstat2      dtstat2
+#define welcht      dwelcht
+#define pairedt     dpairedt
+#define didt        ddidt
+#define fr2z        dfr2z
+#include "stats_real.c"         // double precision versions
+#undef tres
+#undef sum_func
+#undef varm_func
+#undef sum_ptr
+#undef varm_ptr
+#undef sum_select
+#undef varm_select
+#undef sum
+#undef mean
+#undef var
+#undef varm
+#undef var0
+#undef std
+#undef tstat
+#undef tstat2
+#undef welcht
+#undef pairedt
+#undef didt
+#undef fr2z
+#undef REAL
+/*--------------------------------------------------------------------------*/
+#undef REAL                     // restore original definition of REAL
+#ifdef REAL_IS_DOUBLE           // (if necessary)
+#  if REAL_IS_DOUBLE
+#    define REAL double
+#  else
+#    define REAL float
+#  endif
+#endif
+
+/*----------------------------------------------------------------------------
   Function Prototypes
 ----------------------------------------------------------------------------*/
-extern float  ssum     (const float  *a, int n);
-extern float  smean    (const float  *a, int n);
-extern float  svar     (const float  *a, int n);
-extern float  svarm    (const float  *a, int n, float  m);
-extern float  svar0    (const float  *a, int n);
-extern float  sstd     (const float  *a, int n);
-extern float  ststat   (const float  *a, int n);
-extern float  ststat2  (const float  *x1, const float  *x2, int n1, int n2);
-extern stres  swelcht  (const float  *x1, const float  *x2, int n1, int n2);
-extern float  spairedt (const float  *x1, const float  *x2, int n);
-extern float  sdidt    (const float  *x1, const float  *x2,
-                        const float  *y1, const float  *y2, int nx, int ny);
-extern float  sfr2z    (const float  r);
-
-extern double dsum     (const double *a, int n);
-extern double dmean    (const double *a, int n);
-extern double dvar     (const double *a, int n);
-extern double dvarm    (const double *a, int n, double m);
-extern double dvar0    (const double *a, int n);
-extern double dstd     (const double *a, int n);
-extern double dtstat   (const double *a, int n);
-extern double dtstat2  (const double *x1, const double *x2, int n1, int n2);
-extern dtres  dwelcht  (const double *x1, const double *x2, int n1, int n2);
-extern double dpairedt (const double *x1, const double *x2, int n);
-extern double ddidt    (const double *x1, const double *x2,
-                        const double *y1, const double *y2, int nx, int ny);
-extern double dfr2z    (const double r);
-
 extern double dssum    (const float  *a, int n);
 // ... TODO
 
 /*----------------------------------------------------------------------------
   Global Variables
 ----------------------------------------------------------------------------*/
-ssum_func     *ssum_ptr     = &ssum_select;
-svarm_func    *svarm_ptr    = &svarm_select;
-
-dsum_func     *dsum_ptr     = &dsum_select;
-dvarm_func    *dvarm_ptr    = &dvarm_select;
-
-dssum_func    *dssum_ptr    = &dssum_select;
+dssum_func *dssum_ptr = &dssum_select;
 // ... TODO
 
 /*----------------------------------------------------------------------------
   Functions
 ----------------------------------------------------------------------------*/
-
-float ssum_select (const float *a, int n)
-{
-  stats_set_impl(STATS_AUTO);
-  return (*ssum_ptr)(a,n);
-}
-
-float svarm_select (const float *a, int n, float m)
-{
-  stats_set_impl(STATS_AUTO);
-  return (*svarm_ptr)(a,n,m);
-}
-
-/*--------------------------------------------------------------------------*/
-
-double dsum_select (const double *a, int n)
-{
-  stats_set_impl(STATS_AUTO);
-  return (*dsum_ptr)(a,n);
-}
-
-double dvarm_select (const double *a, int n, double m)
-{
-  stats_set_impl(STATS_AUTO);
-  return (*dvarm_ptr)(a,n,m);
-}
-
-/*--------------------------------------------------------------------------*/
-
 double dssum_select (const float *a, int n)
 {
   stats_set_impl(STATS_AUTO);
   return (*dssum_ptr)(a,n);
-}
+}  // dssum_select()
 
 // ... TODO
 

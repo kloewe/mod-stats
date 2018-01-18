@@ -48,8 +48,8 @@ $(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-oct
     -c $< -o $@
 
 stats.o:                 $(OBJDIR)/stats.o
-$(OBJDIR)/stats.o:       stats.h $(CPUINFODIR)/src/cpuinfo.h
-$(OBJDIR)/stats.o:       stats.c makefile-oct
+$(OBJDIR)/stats.o:       stats.h stats_real.h $(CPUINFODIR)/src/cpuinfo.h
+$(OBJDIR)/stats.o:       stats.c stats_real.c makefile-oct
 	CFLAGS='$(CFLAGS)'        $(MEXCC) \
     -I$(CPUINFODIR)/src -I$(DOTDIR)/src \
     -c $< -o $@

@@ -48,8 +48,8 @@ $(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-mex
     -c stats_sse2.c -outdir $(OBJDIR)
 
 stats.o:                 $(OBJDIR)/stats.o
-$(OBJDIR)/stats.o:       stats.h $(CPUINFODIR)/src/cpuinfo.h
-$(OBJDIR)/stats.o:       stats.c makefile-mex
+$(OBJDIR)/stats.o:       stats.h stats_real.h $(CPUINFODIR)/src/cpuinfo.h
+$(OBJDIR)/stats.o:       stats.c stats_real.c makefile-mex
 	$(MEXCC) CFLAGS='$(CFLAGS)'        COPTIMFLAGS='$(CFOPT)' \
     -I$(CPUINFODIR)/src -I$(DOTDIR)/src \
     -c stats.c -outdir $(OBJDIR)
