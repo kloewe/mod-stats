@@ -100,6 +100,9 @@ inline float svarm_sse2 (const float *a, int n, float m)
 {
   assert(a && (n > 1));
 
+  // save the original value of n for later use in the final division
+  int orign = n;
+
   // initialize result variable
   float v = 0.0f;
 
@@ -145,7 +148,7 @@ inline float svarm_sse2 (const float *a, int n, float m)
   for (int k = 4*(n/4); k < n; k++)
     v += (a[k] - m) * (a[k] - m);
 
-  return v /= (float)(n-1);
+  return v /= (float)(orign-1);
 }  // svarm_sse2()
 
 #endif // #ifndef STATS_SSE2_H
