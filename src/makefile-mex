@@ -3,31 +3,46 @@
 # Contents: build objects for use with matlab/mex
 # Author  : Kristian Loewe
 #
-# Examples: make -f makefile-mex
-#           make -f makefile-mex MEX_FLAGS='-v'
+# Usage   : make -f makefile-mex
+#           MEX_FLAGS='-v' make -f makefile-mex
 #           make -f makefile-mex | grep -v 'Warning.*gcc version'
+#           make -B -f makefile-mex | grep -v 'Warning.*gcc version'
+#           DEBUG=1 make -B -f makefile-mex | grep -v 'Warning.*gcc version'
 #-----------------------------------------------------------------------------
-.SUFFIXES:                                   # remove built-in rules
-MAKEFLAGS += -r
+.SUFFIXES:
+MAKEFLAGS   += -r
 
-CPUINFODIR = ../../cpuinfo
-DOTDIR     = ../../dot
+CC          ?= gcc
+CFBASE       = -std=c99 -Wall -Wextra -Wno-unused-parameter -Wconversion \
+               -Wshadow -pedantic
+DEFS        ?=
+MEX_FLAGS   ?=
 
-CC        ?= gcc -std=c99
-CFBASE     = -Wall -Wextra -Wno-unused-parameter -Wconversion -Wshadow \
-             -pedantic
-CFOPT     ?= -O2 -funroll-loops
-DEFS      ?= -DNDEBUG
-CFLAGS     = $(CFBASE) -fPIC $(DEFS)
+DEBUG       ?= 0
+ifeq ($(DEBUG), 1)
+  CFBASE    += -g
+  CFOPT     ?= -O0
+else
+  CFOPT     ?= -O2
+  DEFS      += -DNDEBUG
+endif
+CFLAGS       = $(CFBASE) -fPIC $(DEFS)
 
-MATLABROOT = $(dir $(realpath $(shell which matlab)))
-MEX_FLAGS ?=
-MEXCC      = $(realpath $(MATLABROOT))/mex -largeArrayDims $(MEX_FLAGS)
+MATLABROOT   = $(dir $(realpath $(shell which matlab)))
+MEXCC        = $(realpath $(MATLABROOT))/mex -largeArrayDims $(MEX_FLAGS) \
+               CFLAGS='$(CFLAGS)'
 
-OBJDIR     = ../obj/$(shell uname -m)/matlab
-_DUMMY    := $(shell mkdir -p $(OBJDIR))
+OBJDIR       = ../obj/$(shell uname -m)/matlab
+_DUMMY      := $(shell mkdir -p $(OBJDIR))
 
-OBJS = stats.o stats_naive.o stats_sse2.o
+#-----------------------------------------------------------------------------
+
+CPUINFODIR   = ../../cpuinfo
+DOTDIR       = ../../dot
+
+INCS         = -I$(CPUINFODIR)/src -I$(DOTDIR)/src
+
+OBJS         = stats.o stats_naive.o stats_sse2.o
 
 #-----------------------------------------------------------------------------
 # Build Objects
@@ -38,23 +53,22 @@ stats_naive.o:           $(OBJDIR)/stats_naive.o
 $(OBJDIR)/stats_naive.o: $(DOTDIR)/src/dot_naive.h
 $(OBJDIR)/stats_naive.o: stats_naive.h stats_naive_real.h
 $(OBJDIR)/stats_naive.o: stats_naive.c makefile-mex
-	$(MEXCC) CFLAGS='$(CFLAGS)'        COPTIMFLAGS='$(CFOPT)' \
+	$(MEXCC) COPTIMFLAGS='$(CFOPT) -funroll-loops' \
     -c stats_naive.c -outdir $(OBJDIR)
 
 stats_sse2.o:            $(OBJDIR)/stats_sse2.o
 $(OBJDIR)/stats_sse2.o:  stats_sse2.h
 $(OBJDIR)/stats_sse2.o:  stats_sse2.c makefile-mex
-	$(MEXCC) CFLAGS='$(CFLAGS) -msse2' COPTIMFLAGS='$(CFOPT)' \
+	$(MEXCC) COPTIMFLAGS='$(CFOPT) -funroll-loops -msse2' \
     -c stats_sse2.c -outdir $(OBJDIR)
 
 stats.o:                 $(OBJDIR)/stats.o
 $(OBJDIR)/stats.o:       stats.h stats_real.h $(CPUINFODIR)/src/cpuinfo.h
 $(OBJDIR)/stats.o:       stats.c stats_real.c makefile-mex
-	$(MEXCC) CFLAGS='$(CFLAGS)'        COPTIMFLAGS='$(CFOPT)' \
-    -I$(CPUINFODIR)/src -I$(DOTDIR)/src \
+	$(MEXCC) COPTIMFLAGS='$(CFOPT)' $(INCS) \
     -c stats.c -outdir $(OBJDIR)
 
 stats_all.o:             $(OBJDIR)/stats_all.o
-stats_all.o:             makefile-mex
 $(OBJDIR)/stats_all.o:   $(addprefix $(OBJDIR)/, $(OBJS))
+$(OBJDIR)/stats_all.o:   makefile-mex
 	$(LD) -r -o $(OBJDIR)/stats_all.o $(addprefix $(OBJDIR)/, $(OBJS))
