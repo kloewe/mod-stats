@@ -7,19 +7,40 @@
 /*----------------------------------------------------------------------------
   Function Prototypes
 ----------------------------------------------------------------------------*/
-extern REAL sum     (const REAL *a, int n);
-extern REAL mean    (const REAL *a, int n);
-extern REAL var     (const REAL *a, int n);
-extern REAL varm    (const REAL *a, int n, REAL m);
-extern REAL var0    (const REAL *a, int n);
-extern REAL std     (const REAL *a, int n);
-extern REAL tstat   (const REAL *a, int n);
-extern REAL tstat2  (const REAL *x1, const REAL *x2, int n1, int n2);
-extern tres welcht  (const REAL *x1, const REAL *x2, int n1, int n2);
-extern REAL pairedt (const REAL *x1, const REAL *x2, int n);
-extern REAL didt    (const REAL *x1, const REAL *x2,
-                     const REAL *y1, const REAL *y2, int nx, int ny);
-extern REAL fr2z    (const REAL r);
+
+// one sample
+extern REAL sum       (const REAL *a, int n);
+extern REAL mean      (const REAL *a, int n);
+extern REAL var       (const REAL *a, int n);
+extern REAL varm      (const REAL *a, int n, REAL m);
+extern REAL var0      (const REAL *a, int n);
+extern REAL std       (const REAL *a, int n);
+extern REAL tstat     (const REAL *a, int n);
+
+// two samples
+extern REAL mdiff     (const REAL *x1, const REAL *x2, int n1, int n2);
+extern REAL tstat2    (const REAL *x1, const REAL *x2, int n1, int n2);
+extern tres welcht    (const REAL *x1, const REAL *x2, int n1, int n2);
+extern REAL pairedt   (const REAL *x1, const REAL *x2, int n);
+
+// difference-in-differences
+extern REAL didt      (const REAL *x1, const REAL *x2,
+                       const REAL *y1, const REAL *y2, int nx, int ny);
+
+// wrappers (same signature across functions)
+extern REAL sum_w     (const REAL *a, const int *n);
+extern REAL mean_w    (const REAL *a, const int *n);
+extern REAL var_w     (const REAL *a, const int *n);
+extern REAL var0_w    (const REAL *a, const int *n);
+extern REAL std_w     (const REAL *a, const int *n);
+extern REAL tstat_w   (const REAL *a, const int *n);
+extern REAL mdiff_w   (const REAL *a, const int *n);
+extern REAL tstat2_w  (const REAL *a, const int *n);
+extern REAL pairedt_w (const REAL *a, const int *n);
+extern REAL didt_w    (const REAL *a, const int *n);
+
+// Fisher r-to-z transform
+extern REAL fr2z      (const REAL r);
 
 /*----------------------------------------------------------------------------
   Global Variables

@@ -24,19 +24,10 @@
 #define varm_ptr    svarm_ptr
 #define sum_select  ssum_select
 #define varm_select svarm_select
-#define sum         ssum
-#define mean        smean
-#define var         svar
-#define varm        svarm
-#define var0        svar0
-#define std         sstd
-#define tstat       ststat
-#define tstat2      ststat2
-#define welcht      swelcht
-#define pairedt     spairedt
-#define didt        sdidt
-#define fr2z        sfr2z
+#include "def-or-undef-functions.inc"
 #include "stats_real.c"         // single precision versions
+#undef REAL
+#include "def-or-undef-functions.inc"
 #undef tres
 #undef sum_func
 #undef varm_func
@@ -44,19 +35,6 @@
 #undef varm_ptr
 #undef sum_select
 #undef varm_select
-#undef sum
-#undef mean
-#undef var
-#undef varm
-#undef var0
-#undef std
-#undef tstat
-#undef tstat2
-#undef welcht
-#undef pairedt
-#undef didt
-#undef fr2z
-#undef REAL
 /*--------------------------------------------------------------------------*/
 #define REAL        double      // (re)define REAL to be double
 #define tres        dtres
@@ -66,19 +44,10 @@
 #define varm_ptr    dvarm_ptr
 #define sum_select  dsum_select
 #define varm_select dvarm_select
-#define sum         dsum
-#define mean        dmean
-#define var         dvar
-#define varm        dvarm
-#define var0        dvar0
-#define std         dstd
-#define tstat       dtstat
-#define tstat2      dtstat2
-#define welcht      dwelcht
-#define pairedt     dpairedt
-#define didt        ddidt
-#define fr2z        dfr2z
+#include "def-or-undef-functions.inc"
 #include "stats_real.c"         // double precision versions
+#undef REAL
+#include "def-or-undef-functions.inc"
 #undef tres
 #undef sum_func
 #undef varm_func
@@ -86,19 +55,6 @@
 #undef varm_ptr
 #undef sum_select
 #undef varm_select
-#undef sum
-#undef mean
-#undef var
-#undef varm
-#undef var0
-#undef std
-#undef tstat
-#undef tstat2
-#undef welcht
-#undef pairedt
-#undef didt
-#undef fr2z
-#undef REAL
 /*--------------------------------------------------------------------------*/
 #undef REAL                     // restore original definition of REAL
 #ifdef REAL_IS_DOUBLE           // (if necessary)
@@ -114,6 +70,7 @@
 ----------------------------------------------------------------------------*/
 extern double dssum    (const float  *a, int n);
 // ... TODO
+extern int    isum     (const int    *a, int n);
 
 /*----------------------------------------------------------------------------
   Global Variables

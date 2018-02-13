@@ -24,40 +24,6 @@ extern "C"
 #define ARCH_IS_X86_64
 #endif
 
-#ifdef REAL                     // if REAL is already defined, save its
-#  include "real-is-double.inc" // original definition based on the value
-#  if REAL_IS_DOUBLE
-#    define dot     ddot
-#    define sum     dsum
-#    define mean    dmean
-#    define var     dvar
-#    define varm    dvarm
-#    define var0    dvar0
-#    define std     dstd
-#    define tstat   dtstat
-#    define tstat2  dtstat2
-#    define welcht  dwelcht
-#    define pairedt dpairedt
-#    define didt    ddidt
-#    define fr2z    dfr2z
-#  else
-#    define sqrt    sqrtf
-#    define dot     sdot
-#    define sum     ssum
-#    define mean    smean
-#    define var     svar
-#    define varm    svarm
-#    define var0    svar0
-#    define std     sstd
-#    define tstat   ststat
-#    define tstat2  ststat2
-#    define welcht  swelcht
-#    define pairedt spairedt
-#    define didt    sdidt
-#    define fr2z    sfr2z
-#  endif
-#endif
-
 #define R2Z_MAX 18.3684002848385504   // atanh(1-epsilon)
 
 /*----------------------------------------------------------------------------
@@ -190,37 +156,15 @@ extern double dvarm_sse2   (const double *a, int n, double m);
 #define tres      stres
 #define sum_ptr   ssum_ptr
 #define varm_ptr  svarm_ptr
-#define sum       ssum
-#define mean      smean
-#define var       svar
-#define varm      svarm
-#define var0      svar0
-#define std       sstd
-#define tstat     ststat
-#define tstat2    ststat2
-#define welcht    swelcht
-#define pairedt   spairedt
-#define didt      sdidt
-#define fr2z      sfr2z
+#include "def-or-undef-functions.inc"
 #include "stats_real.h"         // single precision versions
+#undef REAL
+#include "def-or-undef-functions.inc"
 #undef sqrt
 #undef dot
 #undef tres
 #undef sum_ptr
 #undef varm_ptr
-#undef sum
-#undef mean
-#undef var
-#undef varm
-#undef var0
-#undef std
-#undef tstat
-#undef tstat2
-#undef welcht
-#undef pairedt
-#undef didt
-#undef fr2z
-#undef REAL
 /*--------------------------------------------------------------------------*/
 #undef STATS_REAL_H             // undef guard to include header a 2nd time
 /*--------------------------------------------------------------------------*/
@@ -229,40 +173,17 @@ extern double dvarm_sse2   (const double *a, int n, double m);
 #define tres      dtres
 #define sum_ptr   dsum_ptr
 #define varm_ptr  dvarm_ptr
-#define sum       dsum
-#define mean      dmean
-#define var       dvar
-#define varm      dvarm
-#define var0      dvar0
-#define std       dstd
-#define tstat     dtstat
-#define tstat2    dtstat2
-#define welcht    dwelcht
-#define pairedt   dpairedt
-#define didt      ddidt
-#define fr2z      dfr2z
+#include "def-or-undef-functions.inc"
 #include "stats_real.h"         // double precision versions
+#undef REAL
+#include "def-or-undef-functions.inc"
 #undef dot
 #undef tres
 #undef sum_ptr
 #undef varm_ptr
-#undef sum
-#undef mean
-#undef var
-#undef varm
-#undef var0
-#undef std
-#undef tstat
-#undef tstat2
-#undef welcht
-#undef pairedt
-#undef didt
-#undef fr2z
-#undef REAL
 /*--------------------------------------------------------------------------*/
-#undef REAL                     // restore original definition of REAL
-#ifdef REAL_IS_DOUBLE           // (if necessary)
-#  if REAL_IS_DOUBLE
+#ifdef REAL_IS_DOUBLE           // restore original definition of REAL
+#  if REAL_IS_DOUBLE            // (if necessary)
 #    define REAL double
 #  else
 #    define REAL float
@@ -270,11 +191,93 @@ extern double dvarm_sse2   (const double *a, int n, double m);
 #endif
 /*--------------------------------------------------------------------------*/
 
+#ifdef REAL
+#  if REAL_IS_DOUBLE
+#    define dot       ddot
+
+#    define sum       dsum
+#    define mean      dmean
+#    define var       dvar
+#    define varm      dvarm
+#    define var0      dvar0
+#    define std       dstd
+#    define tstat     dtstat
+#    define mdiff     dmdiff
+#    define tstat2    dtstat2
+#    define welcht    dwelcht
+#    define pairedt   dpairedt
+#    define pairedtx  dpairedtx
+#    define didt      ddidt
+
+#    define sum_w     dsum_w
+#    define mean_w    dmean_w
+#    define var_w     dvar_w
+#    define varm_w    dvarm_w
+#    define var0_w    dvar0_w
+#    define std_w     dstd_w
+#    define tstat_w   dtstat_w
+#    define mdiff_w   dmdiff_w
+#    define tstat2_w  dtstat2_w
+#    define welcht_w  dwelcht_w
+#    define pairedt_w dpairedt_w
+#    define didt_w    ddidt_w
+
+#    define fr2z      dfr2z
+
+#  else
+#    define sqrt      sqrtf
+#    define dot       sdot
+
+#    define sum       ssum
+#    define mean      smean
+#    define var       svar
+#    define varm      svarm
+#    define var0      svar0
+#    define std       sstd
+#    define tstat     ststat
+#    define mdiff     smdiff
+#    define tstat2    ststat2
+#    define welcht    swelcht
+#    define pairedt   spairedt
+#    define pairedtx  spairedtx
+#    define didt      sdidt
+
+#    define sum_w     ssum_w
+#    define mean_w    smean_w
+#    define var_w     svar_w
+#    define varm_w    svarm_w
+#    define var0_w    svar0_w
+#    define std_w     sstd_w
+#    define tstat_w   ststat_w
+#    define mdiff_w   smdiff_w
+#    define tstat2_w  ststat2_w
+#    define welcht_w  swelcht_w
+#    define pairedt_w spairedt_w
+#    define didt_w    sdidt_w
+
+#    define fr2z      sfr2z
+#  endif
+#endif
+
+/*--------------------------------------------------------------------------*/
+
 inline double dssum (const float *a, int n) {
   return (*dssum_ptr)(a,n);
 }  // dssum()
 
 // ... TODO
+
+/*--------------------------------------------------------------------------*/
+
+inline int isum (const int *a, int n)
+{
+  assert(a && (n > 0));
+
+  int s = 0;
+  for (int i = 0; i < n; i++)
+    s += a[i];
+  return s;
+}  // isum()
 
 #ifdef __cplusplus
 }
