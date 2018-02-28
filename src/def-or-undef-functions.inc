@@ -26,6 +26,9 @@
 #    define pairedt     spairedt
 #    define didt        sdidt
 
+#    define perm        sperm
+#    define Func1       Func1s
+
 #    define sum_w       ssum_w
 #    define mean_w      smean_w
 #    define var_w       svar_w
@@ -53,6 +56,9 @@
 #    define welcht      dwelcht
 #    define pairedt     dpairedt
 #    define didt        ddidt
+
+#    define perm        dperm
+#    define Func1       Func1d
 
 #    define sum_w       dsum_w
 #    define mean_w      dmean_w
@@ -87,6 +93,9 @@
 #  undef welcht
 #  undef pairedt
 #  undef didt
+
+#  undef perm
+#  undef Func1
 
 #  undef sum_w
 #  undef mean_w

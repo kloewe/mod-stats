@@ -39,6 +39,10 @@ extern REAL tstat2_w  (const REAL *a, const int *n);
 extern REAL pairedt_w (const REAL *a, const int *n);
 extern REAL didt_w    (const REAL *a, const int *n);
 
+// permutation
+extern REAL perm      (const REAL *a, int *n, int ntotal, const int *prm,
+                       int np, Func1 *func, REAL *tmp, REAL *s);
+
 // Fisher r-to-z transform
 extern REAL fr2z      (const REAL r);
 

@@ -209,6 +209,8 @@ extern double dvarm_sse2   (const double *a, int n, double m);
 #    define pairedtx  dpairedtx
 #    define didt      ddidt
 
+#    define perm      dperm
+
 #    define sum_w     dsum_w
 #    define mean_w    dmean_w
 #    define var_w     dvar_w
@@ -241,6 +243,8 @@ extern double dvarm_sse2   (const double *a, int n, double m);
 #    define pairedt   spairedt
 #    define pairedtx  spairedtx
 #    define didt      sdidt
+
+#    define perm      sperm
 
 #    define sum_w     ssum_w
 #    define mean_w    smean_w

@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+typedef REAL Func1    (const REAL* a, const int *n);
+
 /*----------------------------------------------------------------------------
   Function Prototypes
 ----------------------------------------------------------------------------*/
@@ -43,6 +45,10 @@ inline REAL mdiff_w   (const REAL *a, const int *n);
 inline REAL tstat2_w  (const REAL *a, const int *n);
 inline REAL pairedt_w (const REAL *a, const int *n);
 inline REAL didt_w    (const REAL *a, const int *n);
+
+// permutation
+inline REAL perm      (const REAL *a, int *n, int ntotal, const int *prm,
+                       int np, Func1 *func, REAL *tmp, REAL *s);
 
 // Fisher r-to-z transform
 inline REAL fr2z      (const REAL r);
@@ -170,7 +176,6 @@ inline REAL tstat_w (const REAL *a, const int *n)
 
 /*--------------------------------------------------------------------------*/
 
-// mean difference
 inline REAL mdiff (const REAL *x1, const REAL *x2, int n1, int n2)
 {
   assert(x1 && x2 && (n1 > 0) && (n2 > 0));
@@ -274,12 +279,13 @@ inline REAL didt (const REAL *x1, const REAL *x2,
 
   REAL *diffx = (REAL *) malloc((size_t)(nx+ny) *sizeof(REAL));
   // TODO if (!diffx) ...
+  REAL *diffy = diffx + nx;
+
   for (int i = 0; i < nx; i++)
     diffx[i] = x2[i] - x1[i];
   REAL mdx = mean(diffx, nx);
   REAL vdx = varm(diffx, nx, mdx);
 
-  REAL *diffy = diffx + nx;
   for (int i = 0; i < ny; i++)
     diffy[i] = y2[i] - y1[i];
   REAL mdy = mean(diffy, ny);
@@ -302,6 +308,56 @@ inline REAL didt_w (const REAL *a, const int *n)
 
   return didt(a, a+n[0], a+2*n[0], a+2*n[0]+n[1], n[0], n[1]);
 }  // didt_w()
+
+/*--------------------------------------------------------------------------*/
+
+/* perm
+ * ----
+ *
+ * a       data
+ *
+ * n       n[0] - number of data sets in sample #1
+ *         n[1] - number of data sets in sample #2
+ *         ...  - ...
+ *
+ * ntotal  total number of data sets
+ *
+ * prm     permutations
+ *         Permutations are specified in the form of indices into the data
+ *         array and will be used to reorder the data (using the buffer, see
+ *         tmp) before recomputing the statistic.
+ *
+ * np      number of permutations
+ *
+ * func    mdiff_w, tstat2_w, pairedt_w, didt_w
+ *
+ * tmp     buffer for ntotal REAL values
+ *
+ * s       If a valid ptr is passed, it will be used to store the statistic.
+ *         If you need only the p value, pass NULL.
+ *
+ * returns
+ * p value
+ */
+inline REAL perm (const REAL *a, int *n, int ntotal, const int *prm,
+                  int np, Func1 *func, REAL *tmp, REAL *s)
+{
+  assert(a && n && prm && (np > 0) && func && tmp);
+
+  REAL sval = func(a, n);                   // compute the statistic
+  if (s)                                    // if s is not NULL,
+    *s = sval;                              // store the statistic in it
+
+  int cnt = 0;                              // initialize counter
+  for (int i = 0; i < np; i++) {            // for each permutation
+    for (int j = 0; j < ntotal; j++)        // shuffle the data according
+      tmp[j] = a[prm[i * ntotal + j]];      // to the specified reordering
+    if (fabs(func(tmp, n)) >= fabs(sval))   // count how many statistics
+      cnt++;                                // were as or more extreme than
+  }                                         // the one originally observed
+
+  return (REAL)(cnt + 1)/(REAL)(np + 1);    // return the p value
+}  // perm()
 
 /*--------------------------------------------------------------------------*/
 
